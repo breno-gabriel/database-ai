@@ -112,6 +112,16 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.body-height {
+  height: calc(100dvh - 1px);
+  max-height: calc(100dvh - 1px);
+}
+
+.body-width-sidebar {
+  width: calc(100vw - 256px);
+  max-width: calc(100vw - 256px);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
