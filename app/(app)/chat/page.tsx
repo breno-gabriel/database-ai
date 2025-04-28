@@ -5,13 +5,7 @@ import { Input } from "@/components/ui/input";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-
-type Message = {
-  id: string;
-  content: string;
-  sender: "user" | "chatbot";
-  timestamp: Date;
-};
+import { Message } from "./types";
 
 const initialMessages: Message[] = [
   {
@@ -22,15 +16,45 @@ const initialMessages: Message[] = [
   },
 ];
 
+function ChatInput({
+  handleSendMessage,
+}: {
+  handleSendMessage: (
+    event: React.FormEvent,
+    setMessageContent: React.Dispatch<React.SetStateAction<string>>,
+    messageContent: string
+  ) => void;
+}) {
+  const [messageContent, setMessageContent] = useState("");
+  return (
+    <form
+      className="flex items-center gap-2"
+      onSubmit={(event) =>
+        handleSendMessage(event, setMessageContent, messageContent)
+      }
+    >
+      <Input
+        placeholder="Type your message..."
+        className="flex-1"
+        value={messageContent}
+        onChange={(e) => setMessageContent(e.target.value)}
+      />
+      <Button type="submit">Send</Button>
+    </form>
+  );
+}
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
-  const {} = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async (message: Message) => {
       // Simulate sending a message to the server
 
       const response = await axiosClient.post("/api/chatbot/send-message", {
-        message: message.content,
+        content: message.content,
+        sender: "user",
+        timestamp: new Date().toISOString(),
       });
       return response.data;
     },
@@ -38,6 +62,29 @@ export default function ChatPage() {
       setMessages((prev) => [...prev, data]);
     },
   });
+
+  console.log(messages);
+
+  console.log("ChatPage rendered");
+
+  function handleSendMessage(
+    event: React.FormEvent,
+    setMessageContent: React.Dispatch<React.SetStateAction<string>>,
+    messageContent: string
+  ) {
+    if (!messageContent.trim()) return;
+    setMessageContent("");
+    event.preventDefault();
+
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      content: messageContent,
+      sender: "user",
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, newMessage]);
+    mutate(newMessage);
+  }
 
   return (
     <div className="flex body-height flex-col rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
@@ -51,42 +98,44 @@ export default function ChatPage() {
         </div>
       </header>
       <div className="flex-1 flex flex-col-reverse gap-4 overflow-y-auto p-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex items-start gap-3 ${
-              message.sender === "user" ? "justify-end" : ""
-            }`}
-          >
-            {message.sender === "chatbot" && (
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
-                <AvatarFallback>CB</AvatarFallback>
-              </Avatar>
-            )}
+        {messages
+          .sort(
+            (a, b) =>
+              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          )
+          .map((message) => (
             <div
-              className={`rounded-lg border border-gray-200 bg-gray-100 p-3 text-sm dark:border-gray-800 dark:bg-gray-800 ${
-                message.sender === "user"
-                  ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
-                  : ""
+              key={message.id}
+              className={`flex items-start gap-3 ${
+                message.sender === "user" ? "justify-end" : ""
               }`}
             >
-              <p>{message.content}</p>
+              {message.sender === "chatbot" && (
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
+                  <AvatarFallback>CB</AvatarFallback>
+                </Avatar>
+              )}
+              <div
+                className={`rounded-lg border border-gray-200 bg-gray-100 p-3 text-sm dark:border-gray-800 dark:bg-gray-800 ${
+                  message.sender === "user"
+                    ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
+                    : ""
+                }`}
+              >
+                <p>{message.content}</p>
+              </div>
+              {message.sender === "user" && (
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/placeholder-user.jpg" alt="You" />
+                  <AvatarFallback>YU</AvatarFallback>
+                </Avatar>
+              )}
             </div>
-            {message.sender === "user" && (
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder-user.jpg" alt="You" />
-                <AvatarFallback>YU</AvatarFallback>
-              </Avatar>
-            )}
-          </div>
-        ))}
+          ))}
       </div>
       <div className="border-t border-gray-200 p-4 dark:border-gray-800">
-        <form className="flex items-center gap-2">
-          <Input placeholder="Type your message..." className="flex-1" />
-          <Button>Send</Button>
-        </form>
+        <ChatInput handleSendMessage={handleSendMessage} />
       </div>
     </div>
   );
