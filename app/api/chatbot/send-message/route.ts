@@ -1,15 +1,36 @@
 "use server";
-import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
+
+import { GoogleGenAI } from "@google/genai";
+import "dotenv/config";
+import { NextRequest } from "next/server";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
 
 export async function POST(request: NextRequest) {
   const { content, timestamp } = await request.json();
   console.log(content, timestamp);
 
-  return NextResponse.json({
-    id: uuidv4(),
-    content: content,
-    sender: "chatbot",
-    timestamp: timestamp,
+  const response = await ai.models.generateContentStream({
+    model: "gemini-2.0-flash",
+    contents: content,
+  });
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of response) {
+        console.log(chunk.text); // log the chunk text
+        if (chunk.text) {
+          controller.enqueue(new TextEncoder().encode(chunk.text));
+        }
+      }
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/plain",
+      "Transfer-Encoding": "chunked",
+    },
   });
 }
