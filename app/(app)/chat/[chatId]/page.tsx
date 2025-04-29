@@ -3,9 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { v4 as uuid } from "uuid";
 import { Message } from "../types";
 
@@ -170,7 +170,7 @@ export default function ChatPage() {
                     : ""
                 }`}
               >
-                <ReactMarkdown>{`${message.content}`}</ReactMarkdown>
+                <MarkdownRenderer content={message.content} />
               </div>
               {message.sender === "user" && (
                 <Avatar className="h-8 w-8">
