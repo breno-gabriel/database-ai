@@ -2,9 +2,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import axiosClient from "@/lib/axios-client";
+
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { v4 as uuid } from "uuid";
 import { Message } from "./types";
 
 const initialMessages: Message[] = [
@@ -18,12 +20,14 @@ const initialMessages: Message[] = [
 
 function ChatInput({
   handleSendMessage,
+  isPending,
 }: {
   handleSendMessage: (
     event: React.FormEvent,
     setMessageContent: React.Dispatch<React.SetStateAction<string>>,
     messageContent: string
   ) => void;
+  isPending: boolean;
 }) {
   const [messageContent, setMessageContent] = useState("");
   return (
@@ -39,7 +43,9 @@ function ChatInput({
         value={messageContent}
         onChange={(e) => setMessageContent(e.target.value)}
       />
-      <Button type="submit">Send</Button>
+      <Button type="submit" disabled={isPending}>
+        Send
+      </Button>
     </form>
   );
 }
@@ -47,25 +53,66 @@ function ChatInput({
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (message: Message) => {
-      // Simulate sending a message to the server
-
-      const response = await axiosClient.post("/api/chatbot/send-message", {
-        content: message.content,
-        sender: "user",
-        timestamp: new Date().toISOString(),
+      const response = await fetch("/api/chatbot/send-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: message.content,
+          sender: "user",
+          timestamp: new Date().toISOString(),
+        }),
       });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      setMessages((prev) => [...prev, data]);
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let chatbotMessage = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chatbotMessage += decoder.decode(value, { stream: true });
+
+        // While the message is being received, you could update it live
+        setMessages((prev) => {
+          const updated = [...prev];
+          // Update last chatbot message if it exists, else add it
+          const lastMessage = updated.find(
+            (msg) => msg.id === "streaming-chatbot"
+          );
+          if (lastMessage) {
+            lastMessage.content = chatbotMessage;
+          } else {
+            updated.unshift({
+              id: "streaming-chatbot",
+              content: chatbotMessage,
+              sender: "chatbot",
+              timestamp: new Date(),
+            });
+          }
+          return [...updated];
+        });
+      }
+
+      // After finished, replace the temp "streaming-chatbot" id with a real id
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === "streaming-chatbot"
+            ? { ...msg, id: uuid(), timestamp: new Date() }
+            : msg
+        )
+      );
+
+      return;
     },
   });
-
-  console.log(messages);
-
-  console.log("ChatPage rendered");
 
   function handleSendMessage(
     event: React.FormEvent,
@@ -123,7 +170,7 @@ export default function ChatPage() {
                     : ""
                 }`}
               >
-                <p>{message.content}</p>
+                <ReactMarkdown>{`${message.content}`}</ReactMarkdown>
               </div>
               {message.sender === "user" && (
                 <Avatar className="h-8 w-8">
@@ -135,7 +182,10 @@ export default function ChatPage() {
           ))}
       </div>
       <div className="border-t border-gray-200 p-4 dark:border-gray-800">
-        <ChatInput handleSendMessage={handleSendMessage} />
+        <ChatInput
+          handleSendMessage={handleSendMessage}
+          isPending={isPending}
+        />
       </div>
     </div>
   );
