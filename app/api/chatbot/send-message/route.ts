@@ -10,9 +10,22 @@ export async function POST(request: NextRequest) {
   const { content, timestamp } = await request.json();
   console.log(content, timestamp);
 
-  const response = await ai.models.generateContentStream({
+  const chat = ai.chats.create({
     model: "gemini-2.0-flash",
-    contents: content,
+    history: [
+      {
+        role: "user",
+        parts: [{ text: "Hello" }],
+      },
+      {
+        role: "model",
+        parts: [{ text: "Great to meet you. What would you like to know?" }],
+      },
+    ],
+  });
+
+  const response = await chat.sendMessageStream({
+    message: content,
   });
 
   const stream = new ReadableStream({
