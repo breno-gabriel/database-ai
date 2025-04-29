@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { v4 as uuid } from "uuid";
 import { Message } from "./types";
 
@@ -165,7 +166,7 @@ export default function ChatPage() {
                     : ""
                 }`}
               >
-                <p>{message.content}</p>
+                <ReactMarkdown>{`${message.content}`}</ReactMarkdown>
               </div>
               {message.sender === "user" && (
                 <Avatar className="h-8 w-8">
