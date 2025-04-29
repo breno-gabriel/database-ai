@@ -20,12 +20,14 @@ const initialMessages: Message[] = [
 
 function ChatInput({
   handleSendMessage,
+  isPending,
 }: {
   handleSendMessage: (
     event: React.FormEvent,
     setMessageContent: React.Dispatch<React.SetStateAction<string>>,
     messageContent: string
   ) => void;
+  isPending: boolean;
 }) {
   const [messageContent, setMessageContent] = useState("");
   return (
@@ -41,7 +43,9 @@ function ChatInput({
         value={messageContent}
         onChange={(e) => setMessageContent(e.target.value)}
       />
-      <Button type="submit">Send</Button>
+      <Button type="submit" disabled={isPending}>
+        Send
+      </Button>
     </form>
   );
 }
@@ -49,7 +53,7 @@ function ChatInput({
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (message: Message) => {
       const response = await fetch("/api/chatbot/send-message", {
         method: "POST",
@@ -178,7 +182,10 @@ export default function ChatPage() {
           ))}
       </div>
       <div className="border-t border-gray-200 p-4 dark:border-gray-800">
-        <ChatInput handleSendMessage={handleSendMessage} />
+        <ChatInput
+          handleSendMessage={handleSendMessage}
+          isPending={isPending}
+        />
       </div>
     </div>
   );
