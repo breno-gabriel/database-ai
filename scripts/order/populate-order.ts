@@ -1,5 +1,6 @@
 import { order } from "@/db/schemas";
 import { db } from "@/drizzle";
+import pLimit from "p-limit";
 import { readCsvToArray } from "../read-sheet";
 import { parseCustomDate } from "../utils";
 
@@ -9,31 +10,43 @@ export async function populateOrder() {
     console.log("Reading orders sheet...");
     const result = readCsvToArray("./sheets/olist_orders_dataset.csv");
 
-    for (const [index, item] of result.entries()) {
-      await db.insert(order).values({
-        id: item.order_id,
-        customerId: item.customer_id,
-        orderStatus: item.order_status,
-        orderPurchaseTimestamp: parseCustomDate(item.order_purchase_timestamp),
-        orderApprovedAt: parseCustomDate(item.order_approved_at),
-        orderDeliveredCarrierDate: parseCustomDate(
-          item.order_delivered_carrier_date
-        ),
-        orderDeliveredCustomerDate: parseCustomDate(
-          item.order_delivered_customer_date
-        ),
+    const limit = pLimit(10); // Adjust concurrency level if needed
 
-        orderEstimatedDeliveryDate: parseCustomDate(
-          item.order_estimated_delivery_date
-        ),
-      });
+    let completed = 0;
+    const total = result.length;
 
-      if (index % 50 === 0 || index === result.length - 1) {
-        process.stdout.write(
-          `\rProgress: ${((index / result.length) * 100).toFixed(2)}%`
-        );
-      }
-    }
+    const tasks = result.map((item) =>
+      limit(async () => {
+        await db.insert(order).values({
+          id: item.order_id,
+          customerId: item.customer_id,
+          orderStatus: item.order_status,
+          orderPurchaseTimestamp: parseCustomDate(
+            item.order_purchase_timestamp
+          ),
+          orderApprovedAt: parseCustomDate(item.order_approved_at),
+          orderDeliveredCarrierDate: parseCustomDate(
+            item.order_delivered_carrier_date
+          ),
+          orderDeliveredCustomerDate: parseCustomDate(
+            item.order_delivered_customer_date
+          ),
+          orderEstimatedDeliveryDate: parseCustomDate(
+            item.order_estimated_delivery_date
+          ),
+        });
+
+        // Update progress
+        completed++;
+        if (completed % 50 === 0 || completed === total) {
+          process.stdout.write(
+            `\rProgress: ${((completed / total) * 100).toFixed(2)}%`
+          );
+        }
+      })
+    );
+
+    await Promise.all(tasks);
 
     console.log("\nOrders populated successfully.");
   } catch (error) {

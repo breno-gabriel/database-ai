@@ -30,8 +30,8 @@ export const customer = pgTable("customer", {
 
 export const geolocation = pgTable("geolocation", {
   geolocationZipCodePrefix: text("geolocation_zip_code_prefix"),
-  geolocationLat: numeric("geolocation_lat"),
-  geolocationLng: numeric("geolocation_lng"),
+  geolocationLat: numeric({ mode: "number" }),
+  geolocationLng: numeric({ mode: "number" }),
   geolocationCity: text("geolocation_city"),
   geolocationState: text("geolocation_state"),
 });
@@ -52,8 +52,8 @@ export const orderItem = pgTable("order_item", {
       onDelete: "cascade",
     }),
   shippingLimitDate: timestamp("shipping_limit_date").notNull(),
-  price: numeric("price").notNull(),
-  freightValue: numeric("freight_value").notNull(),
+  price: numeric({ mode: "number" }).notNull(),
+  freightValue: numeric({ mode: "number" }).notNull(),
 });
 
 export const orderPayment = pgTable("order_payments", {
@@ -94,13 +94,13 @@ export const order = pgTable("order", {
 export const product = pgTable("product", {
   id: text("id").primaryKey(),
   productCategoryName: text("product_category_name"),
-  productNameLength: numeric({mode: "number"}),
-  productDescriptionLength: numeric({mode: "number"}),
-  productPhotosQty: numeric({mode: "number"}),
-  productWeightG: numeric({mode: "number"}),
-  productLengthCm: numeric({mode: "number"}),
-  productHeightCm: numeric({mode: "number"}),
-  productWidthCm: numeric({mode: "number"}),
+  productNameLength: numeric({ mode: "number" }),
+  productDescriptionLength: numeric({ mode: "number" }),
+  productPhotosQty: numeric({ mode: "number" }),
+  productWeightG: numeric({ mode: "number" }),
+  productLengthCm: numeric({ mode: "number" }),
+  productHeightCm: numeric({ mode: "number" }),
+  productWidthCm: numeric({ mode: "number" }),
 });
 
 export const seller = pgTable("seller", {
