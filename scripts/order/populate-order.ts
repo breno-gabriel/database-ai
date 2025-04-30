@@ -35,7 +35,7 @@ export async function populateOrder() {
       }
     }
 
-    console.log("Orders populated successfully.");
+    console.log("\nOrders populated successfully.");
   } catch (error) {
     console.error("Error populating Orders:", error);
   }
