@@ -1,8 +1,14 @@
+import { populateCustomers } from "./customers/populate-customers";
+import { populateOrder } from "./order/populate-order";
+import { populateProduct } from "./product/populate-product";
 import { populateGeolocation } from "./geolocation/populate-geolocation";
 
 async function main() {
   try {
     // await populateCustomers();
+    // await populateGeolocation();
+    // await populateOrder();
+    await populateProduct(); 
     await populateGeolocation();
     // await populateOrder();
     // await populateSeller();
