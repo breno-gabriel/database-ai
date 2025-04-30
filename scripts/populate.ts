@@ -1,8 +1,9 @@
-import { populateCustomers } from "./customers/populate-customers";
+import { populateGeolocation } from "./geolocation/populate-geolocation";
 
 async function main() {
   try {
-    await populateCustomers();
+    // await populateCustomers();
+    await populateGeolocation();
   } catch (error) {
     console.error("Error populating database:", error);
   }

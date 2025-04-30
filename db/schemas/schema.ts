@@ -29,11 +29,11 @@ export const customer = pgTable("customer", {
 });
 
 export const geolocation = pgTable("geolocation", {
-  geolocationZipCodePrefix: text("geolocation_zip_code_prefix").primaryKey(),
-  geolocationLat: numeric("geolocation_lat").notNull(),
-  geolocationLng: numeric("geolocation_lng").notNull(),
-  geolocationCity: text("geolocation_city").notNull(),
-  geolocationState: text("geolocation_state").notNull(),
+  geolocationZipCodePrefix: text("geolocation_zip_code_prefix"),
+  geolocationLat: numeric("geolocation_lat"),
+  geolocationLng: numeric("geolocation_lng"),
+  geolocationCity: text("geolocation_city"),
+  geolocationState: text("geolocation_state"),
 });
 
 export const orderItem = pgTable("order_item", {

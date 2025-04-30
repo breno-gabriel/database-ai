@@ -22,7 +22,6 @@ export async function populateCustomers() {
       }
     }
 
-    console.log(result[0]);
     console.log("Customers populated successfully.");
   } catch (error) {
     console.error("Error populating database:", error);
