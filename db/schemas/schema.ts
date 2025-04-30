@@ -93,15 +93,14 @@ export const order = pgTable("order", {
 });
 export const product = pgTable("product", {
   id: text("id").primaryKey(),
-  productUniqueId: text("product_unique_id").notNull(),
-  productCategoryName: text("product_category_name").notNull(),
-  productNameLength: numeric("product_name_length").notNull(),
-  productDescriptionLength: numeric("product_description_length").notNull(),
-  productPhotosQty: numeric("product_photos_qty").notNull(),
-  productWeightG: numeric("product_weight_g").notNull(),
-  productLengthCm: numeric("product_length_cm").notNull(),
-  productHeightCm: numeric("product_height_cm").notNull(),
-  productWidthCm: numeric("product_width_cm").notNull(),
+  productCategoryName: text("product_category_name"),
+  productNameLength: numeric({mode: "number"}),
+  productDescriptionLength: numeric({mode: "number"}),
+  productPhotosQty: numeric({mode: "number"}),
+  productWeightG: numeric({mode: "number"}),
+  productLengthCm: numeric({mode: "number"}),
+  productHeightCm: numeric({mode: "number"}),
+  productWidthCm: numeric({mode: "number"}),
 });
 
 export const seller = pgTable("seller", {
