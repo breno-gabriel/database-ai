@@ -1,6 +1,7 @@
 // import { GalleryVerticalEnd } from "lucide-react"
 
 import { LoginForm } from "@/components/login-form"
+import SignUpForm from "@/components/sign-up-forms"
 
 export default function LoginPage() {
   return (
@@ -12,7 +13,7 @@ export default function LoginPage() {
           </div>
           Acme Inc.
         </a> */}
-        <LoginForm />
+        <SignUpForm />
       </div>
     </div>
   )

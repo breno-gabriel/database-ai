@@ -10,3 +10,4 @@ export const authClient = createAuthClient({
     // <-- isso aqui precisa estar!
   },
 });
+
