@@ -85,17 +85,11 @@ export const order = pgTable("order", {
     .notNull()
     .references(() => customer.id, { onDelete: "cascade" }),
   orderStatus: text("order_status").notNull(),
-  orderPurchaseTimestamp: timestamp("order_purchase_timestamp").notNull(),
-  orderApprovedAt: timestamp("order_approved_at").notNull(),
-  orderDeliveredCarrierDate: timestamp(
-    "order_delivered_carrier_date"
-  ).notNull(),
-  orderDeliveredCustomerDate: timestamp(
-    "order_delivered_customer_date"
-  ).notNull(),
-  orderEstimatedDeliveryDate: timestamp(
-    "order_estimated_delivery_date"
-  ).notNull(),
+  orderPurchaseTimestamp: timestamp("order_purchase_timestamp"),
+  orderApprovedAt: timestamp("order_approved_at"),
+  orderDeliveredCarrierDate: timestamp("order_delivered_carrier_date"),
+  orderDeliveredCustomerDate: timestamp("order_delivered_customer_date"),
+  orderEstimatedDeliveryDate: timestamp("order_estimated_delivery_date"),
 });
 export const product = pgTable("product", {
   id: text("id").primaryKey(),
