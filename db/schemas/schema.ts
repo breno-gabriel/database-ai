@@ -105,10 +105,10 @@ export const product = pgTable("product", {
 
 export const seller = pgTable("seller", {
   id: text("id").primaryKey(),
-  sellerUniqueId: text("seller_unique_id").notNull(),
-  sellerZipCodePrefix: text("seller_zip_code_prefix").notNull(),
-  sellerCity: text("seller_city").notNull(),
-  sellerState: text("seller_state").notNull(),
+
+  sellerZipCodePrefix: text("seller_zip_code_prefix"),
+  sellerCity: text("seller_city"),
+  sellerState: text("seller_state"),
 });
 
 export const productCategoryNameTranslation = pgTable(
