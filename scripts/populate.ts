@@ -1,5 +1,8 @@
+import { populateCustomers } from "./customers/populate-customers";
+
 async function main() {
   try {
+    await populateCustomers();
   } catch (error) {
     console.error("Error populating database:", error);
   }

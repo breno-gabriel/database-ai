@@ -22,10 +22,12 @@
     "@tanstack/react-query": "^5.74.7",
     "axios": "^1.9.0",
     "better-auth": "^1.2.7",
+    "chardet": "^2.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
+    "iconv-lite": "^0.6.3",
     "lucide-react": "^0.503.0",
     "next": "15.3.1",
     "pg": "^8.15.6",
@@ -36,7 +38,8 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.2.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
