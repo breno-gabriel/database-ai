@@ -1,20 +1,12 @@
-import { GoogleGenAI } from "@google/genai";
+import { customer } from "@/db/schemas";
+import { db } from "@/drizzle";
 import "dotenv/config";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
-
 async function main() {
-  const response = await ai.models.generateContentStream({
-    model: "gemini-2.0-flash",
-    contents: "how to build an app with react",
-  });
-
-  for await (const chunk of response) {
-    console.log(chunk.text);
-  }
+  const result = await db.select().from(customer);
+  console.log(result);
 }
 
 // Em CommonJS, para usar await no topo, precisa fazer isso:
-(async () => {
-  await main();
-})();
+
+main();
