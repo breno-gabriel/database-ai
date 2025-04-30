@@ -1,11 +1,12 @@
-import { populateGeolocation } from "./geolocation/populate-geolocation";
+import { populateProductCategoryNameTranslation } from "./productCategoryNamerTranslation/populate-product-category-name-translation";
 
 async function main() {
   try {
     // await populateCustomers();
-    await populateGeolocation();
+    // await populateGeolocation();
     // await populateOrder();
     // await populateSeller();
+    await populateProductCategoryNameTranslation();
   } catch (error) {
     console.error("Error populating database:", error);
   }
