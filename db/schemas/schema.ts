@@ -16,7 +16,7 @@ export const message = pgTable("message", {
     .notNull()
     .references(() => chat.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  sender: text("sender").notNull(), // 'user' or 'chatbot'
+  role: text("role").notNull(), // 'user' or 'chatbot'
   sendAt: timestamp("send_at").notNull(),
 });
 
@@ -63,9 +63,8 @@ export const orderPayment = pgTable("order_payments", {
 
 export const orderReview = pgTable("order_review", {
   reviewId: text("reviewId"),
-  orderId: text("order_id")
-    .references(() => order.id, { onDelete: "cascade" }),
-  reviewScore: numeric({mode: "number"}),
+  orderId: text("order_id").references(() => order.id, { onDelete: "cascade" }),
+  reviewScore: numeric({ mode: "number" }),
   reviewCommentTitle: text("review_comment_title"),
   reviewCommentMessage: text("review_comment_message"),
   reviewCreationDate: timestamp("review_creation_date"),

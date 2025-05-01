@@ -4,19 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { MarkdownRenderer } from "@/components/markdown-renderer";
-import { useMutation } from "@tanstack/react-query";
+import axiosClient from "@/lib/axios-client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../types";
-
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    content: "Hello, how can I assist you today?",
-    sender: "chatbot",
-    timestamp: new Date(),
-  },
-];
 
 function ChatInput({
   handleSendMessage,
@@ -51,7 +44,20 @@ function ChatInput({
 }
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const { chatId } = useParams();
+
+  const { isLoading, isError } = useQuery({
+    queryKey: ["chat-messages"],
+
+    queryFn: async () => {
+      const response = await axiosClient.get(`/api/message/all/${chatId}`, {});
+      setMessages(response.data);
+      return response.data;
+    },
+    enabled: !!chatId,
+  });
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (message: Message) => {
@@ -62,7 +68,7 @@ export default function ChatPage() {
         },
         body: JSON.stringify({
           content: message.content,
-          sender: "user",
+          role: "user",
           timestamp: new Date().toISOString(),
         }),
       });
@@ -93,7 +99,7 @@ export default function ChatPage() {
             updated.unshift({
               id: "streaming-chatbot",
               content: chatbotMessage,
-              sender: "chatbot",
+              role: "model",
               timestamp: new Date(),
             });
           }
@@ -126,7 +132,7 @@ export default function ChatPage() {
     const newMessage: Message = {
       id: Date.now().toString(),
       content: messageContent,
-      sender: "user",
+      role: "user",
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, newMessage]);
@@ -145,6 +151,8 @@ export default function ChatPage() {
         </div>
       </header>
       <div className="flex-1 flex flex-col-reverse gap-4 overflow-y-auto p-4">
+        {isLoading && <div>Loading...</div>}
+        {isError && <div>Error loading messages</div>}
         {messages
           .sort(
             (a, b) =>
@@ -154,10 +162,10 @@ export default function ChatPage() {
             <div
               key={message.id}
               className={`flex items-start gap-3 ${
-                message.sender === "user" ? "justify-end" : ""
+                message.role === "user" ? "justify-end" : ""
               }`}
             >
-              {message.sender === "chatbot" && (
+              {message.role === "model" && (
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
                   <AvatarFallback>CB</AvatarFallback>
@@ -165,14 +173,14 @@ export default function ChatPage() {
               )}
               <div
                 className={`rounded-lg border border-gray-200 bg-gray-100 p-3 text-sm dark:border-gray-800 dark:bg-gray-800 ${
-                  message.sender === "user"
+                  message.role === "user"
                     ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
                     : ""
                 }`}
               >
                 <MarkdownRenderer content={message.content} />
               </div>
-              {message.sender === "user" && (
+              {message.role === "user" && (
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder-user.jpg" alt="You" />
                   <AvatarFallback>YU</AvatarFallback>
@@ -184,7 +192,7 @@ export default function ChatPage() {
       <div className="border-t border-gray-200 p-4 dark:border-gray-800">
         <ChatInput
           handleSendMessage={handleSendMessage}
-          isPending={isPending}
+          isPending={isPending || isLoading || isError}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 export type Message = {
   id: string;
   content: string;
-  sender: "user" | "chatbot";
+  role: "user" | "model";
   timestamp: Date;
 };
