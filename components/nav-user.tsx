@@ -28,11 +28,26 @@ import {
 import { authClient } from "@/lib/auth-client";
 import shadcnAvatar from "@/public/shadcn-avatar.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation"
 
 export function NavUser() {
   const { isMobile } = useSidebar();
 
   const { data: session } = authClient.useSession();
+
+  const router = useRouter();
+
+  const handleLogOut = async () => {
+
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login"); // redirect to login page
+        },
+      },
+    });
+
+  }
 
   return (
     <SidebarMenu>
@@ -121,7 +136,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>
