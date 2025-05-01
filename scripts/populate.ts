@@ -3,6 +3,7 @@ import { populateOrderPayments } from "./orderPayment/populate-order-payment";
 async function main() {
   try {
     // await populateCustomers();
+    // await populateProduct(); 
     // await populateGeolocation();
     // await populateOrder();
     // await populateProduct();
@@ -16,7 +17,5 @@ async function main() {
     console.error("Error populating database:", error);
   }
 }
-
-// Em CommonJS, para usar await no topo, precisa fazer isso:
 
 main();
