@@ -37,34 +37,28 @@ export const geolocation = pgTable("geolocation", {
 });
 
 export const orderItem = pgTable("order_item", {
-  id: numeric("id").primaryKey(),
-  orderId: text("order_id")
-    .notNull()
-    .references(() => order.id, { onDelete: "cascade" }),
-  productId: text("product_id")
-    .notNull()
-    .references(() => product.id, {
-      onDelete: "cascade",
-    }),
-  sellerId: text("seller_id")
-    .notNull()
-    .references(() => seller.id, {
-      onDelete: "cascade",
-    }),
-  shippingLimitDate: timestamp("shipping_limit_date").notNull(),
-  price: numeric({ mode: "number" }).notNull(),
-  freightValue: numeric({ mode: "number" }).notNull(),
+  id: numeric({ mode: "number" }),
+  orderId: text("order_id").references(() => order.id, { onDelete: "cascade" }),
+  productId: text("product_id").references(() => product.id, {
+    onDelete: "cascade",
+  }),
+  sellerId: text("seller_id").references(() => seller.id, {
+    onDelete: "cascade",
+  }),
+  shippingLimitDate: timestamp("shipping_limit_date"),
+  price: numeric({ mode: "number" }),
+  freightValue: numeric({ mode: "number" }),
 });
 
 export const orderPayment = pgTable("order_payments", {
-  id: text("id").primaryKey(),
+  id: text("id"),
   orderId: text("order_id")
     .notNull()
     .references(() => order.id, { onDelete: "cascade" }),
-  paymentSequential: text("payment_sequential").notNull(),
+  paymentSequential: numeric({ mode: "number" }),
   paymentType: text("payment_type").notNull(),
-  paymentInstallments: numeric("payment_installments").notNull(),
-  paymentValue: numeric("payment_value").notNull(),
+  paymentInstallments: numeric({ mode: "number" }),
+  paymentValue: numeric({ mode: "number" }),
 });
 
 export const orderReview = pgTable("order_review", {
@@ -80,7 +74,7 @@ export const orderReview = pgTable("order_review", {
 
 export const order = pgTable("order", {
   id: text("id").primaryKey(),
-  customerId: text("costumer_id")
+  customerId: text("customer_id")
     .notNull()
     .references(() => customer.id, { onDelete: "cascade" }),
   orderStatus: text("order_status").notNull(),

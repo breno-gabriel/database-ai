@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { orderItem } from "@/db/schemas";
 import { db } from "@/drizzle";
 import pLimit from "p-limit";
 import { readCsvToArray } from "../read-sheet";
+import { parseCustomDate } from "../utils";
 
 export async function populateOrderItems() {
   try {
+    await db.delete(orderItem);
     console.log("Reading order items sheet...");
     const result = readCsvToArray("./sheets/olist_order_items_dataset.csv");
 
@@ -16,21 +17,14 @@ export async function populateOrderItems() {
 
     const tasks = result.map((item) =>
       limit(async () => {
-        const price: any = item.order_item_price
-          ? +item.order_item_price
-          : null;
-        const freightValue: any = item.order_item_freight_value
-          ? +item.order_item_freight_value
-          : null;
-
         await db.insert(orderItem).values({
-          id: item.order_item_id,
+          id: item.order_item_id ? +item.order_item_id : null,
           orderId: item.order_id,
-          productId: item.order_item_product_id,
-          sellerId: item.order_item_seller_id,
-          shippingLimitDate: item.order_item_shipping_limit_date,
-          price,
-          freightValue,
+          productId: item.product_id,
+          sellerId: item.seller_id,
+          shippingLimitDate: parseCustomDate(item.shipping_limit_date),
+          price: item.price ? +item.price : null,
+          freightValue: item.freight_value ? +item.freight_value : null,
         });
 
         completed++;

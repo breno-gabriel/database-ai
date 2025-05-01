@@ -5,6 +5,9 @@ import { readCsvToArray } from "../read-sheet";
 
 export async function populateCustomers() {
   try {
+    console.log("Reading customers sheet...");
+    await db.delete(customer);
+
     const result = readCsvToArray("./sheets/olist_customers_dataset.csv");
 
     const limit = pLimit(10); // Adjust concurrency as needed
