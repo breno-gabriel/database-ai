@@ -1,23 +1,25 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { toast } from "sonner";
+import { z } from 'zod';
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, SubmitHandler } from "react-hook-form"
+import { useRouter } from "next/navigation"
+import { Form } from "./ui/form"
+import { message } from "@/db/schemas"
 
 const signUpSchema = z
   .object({
@@ -44,18 +46,27 @@ const signUpSchema = z
     }
   });
 
-export default function SignUpForm() {
-  const router = useRouter();
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof signUpSchema>>({
+interface IFormInput {
+  email: string
+  password: string
+}
+
+export default function SignUpForm({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+
+  const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
-    },
+      confirmPassword: ""
+    }
   });
+
+  const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["sign-up"],
@@ -68,7 +79,7 @@ export default function SignUpForm() {
         },
         {
           onError: (error) => {
-            toast.error(`Erro ao fazer se cadastrar: ${error.error.message}`);
+            toast.error(`Erro ao realizar cadastrar: ${error.error.message}`);
           },
           onSuccess() {
             router.push("/login");
@@ -79,103 +90,83 @@ export default function SignUpForm() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof signUpSchema>) {
-    mutate(values);
-  }
+  // function handleSubmit(values: z.infer<typeof loginSchema>) {
+  //   mutate(values);
+  // }
+
+  const onSubmit: SubmitHandler<z.infer<typeof signUpSchema>> = (values) => mutate(values);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col items-center gap-2 text-center w-full">
-        <h1 className="text-2xl font-bold">Registrar uma conta</h1>
-        <p className="text-muted-foreground text-sm w-full flex-grow">
-          Preencha os campos abaixo para ter acesso ao nosso serviço!
-        </p>
-      </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome Completo</FormLabel>
-                <FormControl>
-                  <Input placeholder="Digite o seu nome completo" {...field} />
-                </FormControl>
-                {/* <FormDescription>
-                    This is your public display name.
-                </FormDescription> */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Digite o meu email</FormLabel>
-                <FormControl>
-                  <Input placeholder="example@email.com" {...field} />
-                </FormControl>
-                {/* <FormDescription>
-                    This is your public display name.
-                </FormDescription> */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Senha</FormLabel>
-                <FormControl>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Registrar uma conta</CardTitle>
+          <CardDescription>
+            Preencha os campos abaixo
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid gap-6">
+              <div className="grid gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Nome completo</Label>
                   <Input
-                    type="password"
-                    placeholder="Digite uma senha"
-                    {...field}
+                    id="name"
+                    type="text"
+                    placeholder=""
+                    {...register("name")}
                   />
-                </FormControl>
-                {/* <FormDescription>
-                    This is your public display name.
-                </FormDescription> */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirmar senha</FormLabel>
-                <FormControl>
+                  {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    type="password"
-                    placeholder="Repita a senha"
-                    {...field}
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    {...register("email")}
                   />
-                </FormControl>
-                {/* <FormDescription>
-                    This is your public display name.
-                </FormDescription> */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" className="w-full" disabled={isPending}>
-            Sign up
-          </Button>
-          <div className="text-center text-sm">
-            Já tem uma conta?
-            <a href="/login" className="underline underline-offset-4">
-              Faça login
-            </a>
-          </div>
-        </form>
-      </Form>
+                  {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="password">Senha</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder=""
+                      {...register("password")}
+                    />
+                    {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="password">Confirmar Senha</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder=""
+                      {...register("confirmPassword")}
+                    />
+                    {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
+                  </div>
+
+                  <Button type="submit" className="w-full cursor-pointer">
+                    Login
+                  </Button>
+                </div>
+                <div className="text-center text-sm">
+                  Já têm uma conta ? {" "}
+                  <a href="/login" className="underline underline-offset-4 cursor-pointer">
+                    Entrar
+                  </a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }

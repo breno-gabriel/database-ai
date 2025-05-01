@@ -62,14 +62,13 @@ export const orderPayment = pgTable("order_payments", {
 });
 
 export const orderReview = pgTable("order_review", {
-  id: text("id").primaryKey(),
+  reviewId: text("reviewId"),
   orderId: text("order_id")
-    .notNull()
     .references(() => order.id, { onDelete: "cascade" }),
-  reviewScore: numeric("review_score").notNull(),
+  reviewScore: numeric({mode: "number"}),
   reviewCommentTitle: text("review_comment_title"),
   reviewCommentMessage: text("review_comment_message"),
-  reviewCreationDate: timestamp("review_creation_date").notNull(),
+  reviewCreationDate: timestamp("review_creation_date"),
   reviewAnswerTimestamp: timestamp("review_answer_timestamp"),
 });
 
