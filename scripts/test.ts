@@ -2,13 +2,15 @@ import {
   geolocation,
   customer,
   product,
+  order, 
   productCategoryNameTranslation,
+  orderReview
 } from "@/db/schemas";
 import { db } from "@/drizzle";
 import "dotenv/config";
 
 async function main() {
-  const result = await db.select().from(productCategoryNameTranslation);
+  const result = await db.select().from(orderReview);
   console.log(result);
 }
 

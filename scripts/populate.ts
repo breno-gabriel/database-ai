@@ -11,7 +11,7 @@ async function main() {
     // await populateGeolocation();
     // await populateOrder();
     // await populateOrder();
-    await populateOrder();
+    // await populateOrder();
     // await populateSeller();
     // await populateProductCategoryNameTranslation();
     await populateOrderReview()

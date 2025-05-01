@@ -68,7 +68,7 @@ export const orderPayment = pgTable("order_payments", {
 });
 
 export const orderReview = pgTable("order_review", {
-  reviewId: text("id").primaryKey(),
+  reviewId: text("reviewId"),
   orderId: text("order_id")
     .references(() => order.id, { onDelete: "cascade" }),
   reviewScore: numeric({mode: "number"}),

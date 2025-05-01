@@ -1,7 +1,8 @@
 import { orderReview } from "../../db/schemas/schema";
 import { db } from "@/drizzle";
-import { readCsvToArray } from "../read-sheet";
+// import { readCsvToArray } from "../read-sheet";
 import pLimit from "p-limit";
+import { parseCustomDate, readCsvToArray } from "../utils";
 
 export async function populateOrderReview() {
   try {
@@ -11,7 +12,7 @@ export async function populateOrderReview() {
 
     // Read the CSV file into an array
     console.log("Reading review table sheet...");
-    const result = await readCsvToArray("./sheets/olist_order_reviews_dataset.csv");
+    const result = readCsvToArray("./sheets/olist_order_reviews_dataset.csv");
 
     const limit = pLimit(10); // Limit concurrency to 10
     let completed = 0;
@@ -27,12 +28,8 @@ export async function populateOrderReview() {
             reviewScore: item.review_score ? +item.review_score : null,
             reviewCommentTitle: item.review_comment_title,
             reviewCommentMessage: item.review_comment_message,
-            reviewCreationDate: item.review_creation_date
-              ? new Date(item.review_creation_date)
-              : null,
-            reviewAnswerTimestamp: item.review_answer_timestamp
-              ? new Date(item.review_answer_timestamp)
-              : null,
+            reviewCreationDate: parseCustomDate(item.review_creation_date),
+            reviewAnswerTimestamp: parseCustomDate(item.review_answer_timestamp),
           });
 
           completed++;
