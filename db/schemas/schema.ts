@@ -51,7 +51,7 @@ export const orderItem = pgTable("order_item", {
 });
 
 export const orderPayment = pgTable("order_payments", {
-  id: text("id").primaryKey(),
+  id: text("id"),
   orderId: text("order_id")
     .notNull()
     .references(() => order.id, { onDelete: "cascade" }),
@@ -75,7 +75,7 @@ export const orderReview = pgTable("order_review", {
 
 export const order = pgTable("order", {
   id: text("id").primaryKey(),
-  customerId: text("costumer_id")
+  customerId: text("customer_id")
     .notNull()
     .references(() => customer.id, { onDelete: "cascade" }),
   orderStatus: text("order_status").notNull(),

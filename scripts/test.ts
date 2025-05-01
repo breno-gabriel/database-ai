@@ -1,10 +1,9 @@
-import { orderItem } from "@/db/schemas";
+import { geolocation } from "@/db/schemas";
 import { db } from "@/drizzle";
 import "dotenv/config";
 
 async function main() {
-  const result = await db.select().from(orderItem);
-  console.log(result);
+  await db.select().from(geolocation);
 }
 
 // Em CommonJS, para usar await no topo, precisa fazer isso:

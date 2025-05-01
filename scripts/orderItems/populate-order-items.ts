@@ -6,6 +6,7 @@ import { parseCustomDate } from "../utils";
 
 export async function populateOrderItems() {
   try {
+    await db.delete(orderItem);
     console.log("Reading order items sheet...");
     const result = readCsvToArray("./sheets/olist_order_items_dataset.csv");
 
