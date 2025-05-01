@@ -1,4 +1,10 @@
-import { geolocation, customer, product, productCategoryNameTranslation } from "@/db/schemas";
+import { product } from "@/db/schemas";
+import {
+  geolocation,
+  customer,
+  product,
+  productCategoryNameTranslation,
+} from "@/db/schemas";
 import { db } from "@/drizzle";
 import "dotenv/config";
 

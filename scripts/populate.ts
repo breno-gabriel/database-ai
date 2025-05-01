@@ -9,8 +9,11 @@ async function main() {
     // await populateCustomers();
     // await populateProduct(); 
     // await populateGeolocation();
+    // await populateOrder();
+    // await populateOrder();
     await populateOrder();
     // await populateSeller();
+    // await populateProductCategoryNameTranslation();
     await populateOrderReview()
   } catch (error) {
     console.error("Error populating database:", error);
