@@ -32,7 +32,7 @@ export function NavMain() {
           {data?.map((item) => (
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild className="h-fit">
-                <a href={item.id} className="truncate">
+                <a href={`/chat/${item.id}`} className="truncate">
                   <MessageCircleMore className="h-6 w-6" />
                   <div className=" flex flex-col text-xs text-muted-foreground">
                     <span className="">
