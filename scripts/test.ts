@@ -1,9 +1,9 @@
-import { product } from "@/db/schemas";
+import { orderItem } from "@/db/schemas";
 import { db } from "@/drizzle";
 import "dotenv/config";
 
 async function main() {
-  const result = await db.select().from(product);
+  const result = await db.select().from(orderItem);
   console.log(result);
 }
 
