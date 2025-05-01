@@ -22,7 +22,7 @@ export async function GET() {
       .orderBy(desc(chat.createdAt))
       .limit(10);
 
-    return NextResponse.json({ chats }, { status: 200 });
+    return NextResponse.json(chats, { status: 200 });
   } catch (error) {
     console.error("Error in GET request:", error);
     return NextResponse.json(

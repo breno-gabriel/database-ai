@@ -1,35 +1,53 @@
-"use client"
-
-import { type LucideIcon } from "lucide-react"
+"use client";
 
 import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import axiosClient from "@/lib/axios-client";
+import { ChatType } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { MessageCircleMore } from "lucide-react";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
-  }[]
-}) {
+export function NavMain() {
+  const { data } = useQuery({
+    queryKey: ["chats-query"],
+    queryFn: async (): Promise<ChatType[]> => {
+      // Simulate fetching data
+      const response = await axiosClient.get("/api/chat/all");
+      return response.data ?? [];
+    },
+  });
+
   return (
-    <SidebarMenu>
-      {items.map((item) => (
-        <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild isActive={item.isActive}>
-            <a href={item.url}>
-              <item.icon />
-              <span>{item.title}</span>
-            </a>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
-    </SidebarMenu>
-  )
+    <SidebarGroup>
+      <SidebarGroupLabel>Chats</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {data?.map((item) => (
+            <SidebarMenuItem key={item.id}>
+              <SidebarMenuButton asChild className="h-fit">
+                <a href={item.id} className="truncate">
+                  <MessageCircleMore className="h-6 w-6" />
+                  <div className=" flex flex-col text-xs text-muted-foreground">
+                    <span className="">
+                      {format(new Date(item.createdAt), "dd/MM/yyyy HH:mm")}
+                    </span>
+                    <span className="text-sm font-medium text-foreground truncate max-w-[164px]">
+                      {item.id}
+                    </span>
+                  </div>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
 }
