@@ -1,4 +1,3 @@
-import { product } from "@/db/schemas";
 import {
   geolocation,
   customer,
