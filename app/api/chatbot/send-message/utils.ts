@@ -1,5 +1,10 @@
 import { db } from "@/drizzle";
-import { Chat, GoogleGenAI, Type } from "@google/genai";
+import {
+  Chat,
+  FunctionCallingConfigMode,
+  GoogleGenAI,
+  Type,
+} from "@google/genai";
 import "dotenv/config";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
@@ -20,25 +25,48 @@ export const queryDatabaseFunctionDeclaration = {
 };
 
 function executeQuery({ query }: { query: string }) {
+  console.log("Executing query:", query);
   return db.execute(query);
 }
 
 export async function decideFunction(geminiChat: Chat, content: string) {
-  const response = await geminiChat.sendMessage({
-    message: content,
-  });
-  console.log("response.text", response.text);
+  try {
+    const systemInstruction = await getSystemInstruction();
+    const response = await geminiChat.sendMessage({
+      message: content,
+      config: {
+        systemInstruction,
+        toolConfig: {
+          functionCallingConfig: {
+            mode: FunctionCallingConfigMode.ANY,
+          },
+        },
 
-  if (response.functionCalls && response.functionCalls.length > 0) {
-    const functionCall = response.functionCalls[0]; // Assuming one function call
-    console.log(`Function to call: ${functionCall.name}`);
-    console.log(`Arguments: ${JSON.stringify(functionCall.args)}`);
+        tools: [
+          {
+            functionDeclarations: [queryDatabaseFunctionDeclaration],
+          },
+        ],
+      },
+    });
+    console.log("response.text", response.text);
+    console.log("response.prompt_feedback", response.promptFeedback);
 
-    return executeQuery(functionCall.args as { query: string });
-  } else {
-    console.log("No function call found in the response.");
+    if (response.functionCalls && response.functionCalls.length > 0) {
+      const functionCall = response.functionCalls[0]; // Assuming one function call
+      console.log(`Function to call: ${functionCall.name}`);
+      console.log(`Arguments: ${JSON.stringify(functionCall.args)}`);
 
-    return response.text;
+      return executeQuery(functionCall.args as { query: string });
+    } else {
+      console.log("No function call found in the response.");
+
+      return;
+    }
+    return;
+  } catch (error) {
+    console.error("Error in decideFunction:", error);
+    return;
   }
 }
 
@@ -81,7 +109,7 @@ export async function getSystemInstruction() {
     });
   }
 
-  const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question. You need to format the query results in a table. You need to always call the function queryDatabaseFunctionDeclaration.`;
+  const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question. You need to format the query results in a table.`;
 
   return introduction + "\n\n" + JSON.stringify(groupedSchema);
 }

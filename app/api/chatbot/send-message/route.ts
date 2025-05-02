@@ -66,31 +66,20 @@ export async function POST(request: NextRequest) {
     parts: [{ text: message.content }],
   }));
 
-  const systemInstruction = await getSystemInstruction();
-
   const geminiChat = ai.chats.create({
     model: "gemini-2.0-flash",
     history: chatHistory,
-
-    config: {
-      systemInstruction,
-      toolConfig: {
-        functionCallingConfig: {
-          mode: FunctionCallingConfigMode.ANY,
-        },
-      },
-      tools: [
-        {
-          functionDeclarations: [queryDatabaseFunctionDeclaration],
-        },
-      ],
-    },
   });
 
-  await decideFunction(geminiChat, content);
+  const result = await decideFunction(geminiChat, content);
 
+  console.log("result", result);
   const response = await geminiChat.sendMessageStream({
-    message: content,
+    message: result
+      ? `${content}. Esse é o resultado da query: ${JSON.stringify(
+          result.rows as any
+        )}`
+      : content,
   });
 
   const stream = new ReadableStream({
