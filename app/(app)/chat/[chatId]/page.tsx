@@ -67,9 +67,11 @@ export default function ChatPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          id: message.id,
+          chatId: chatId,
           content: message.content,
           role: "user",
-          timestamp: new Date().toISOString(),
+          sendAt: new Date().toISOString(),
         }),
       });
 
@@ -100,18 +102,29 @@ export default function ChatPage() {
               id: "streaming-chatbot",
               content: chatbotMessage,
               role: "model",
-              timestamp: new Date(),
+              sendAt: new Date(),
             });
           }
           return [...updated];
         });
       }
 
+      const chatBotMessageId = uuid();
+      const chatBotFinished = new Date();
+
+      await axiosClient.post(`/api/message/create/${chatId}`, {
+        id: chatBotMessageId,
+        chatId: chatId,
+        content: chatbotMessage,
+        role: "model",
+        sendAt: new Date().toISOString(),
+      });
+
       // After finished, replace the temp "streaming-chatbot" id with a real id
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === "streaming-chatbot"
-            ? { ...msg, id: uuid(), timestamp: new Date() }
+            ? { ...msg, id: chatBotMessageId, sendAt: chatBotFinished }
             : msg
         )
       );
@@ -119,6 +132,8 @@ export default function ChatPage() {
       return;
     },
   });
+
+  console.log("messages", messages);
 
   function handleSendMessage(
     event: React.FormEvent,
@@ -132,8 +147,9 @@ export default function ChatPage() {
     const newMessage: Message = {
       id: Date.now().toString(),
       content: messageContent,
+
       role: "user",
-      timestamp: new Date(),
+      sendAt: new Date(),
     };
     setMessages((prev) => [...prev, newMessage]);
     mutate(newMessage);
@@ -156,7 +172,7 @@ export default function ChatPage() {
         {messages
           .sort(
             (a, b) =>
-              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+              new Date(b.sendAt).getTime() - new Date(a.sendAt).getTime()
           )
           .map((message) => (
             <div

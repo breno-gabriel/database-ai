@@ -37,7 +37,13 @@ export async function GET(
     }
 
     const messages = await db
-      .select()
+      .select({
+        id: message.id,
+        content: message.content,
+        role: message.role,
+        sendAt: message.sendAt,
+        chatId: message.chatId,
+      })
       .from(message)
       .innerJoin(chat, eq(message.chatId, chat.id))
       .where(eq(message.chatId, chatId))
