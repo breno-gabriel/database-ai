@@ -1,23 +1,18 @@
 "use client";
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
+  LogOut
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
@@ -28,11 +23,26 @@ import {
 import { authClient } from "@/lib/auth-client";
 import shadcnAvatar from "@/public/shadcn-avatar.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
 
   const { data: session } = authClient.useSession();
+
+  const router = useRouter();
+
+  const handleLogOut = async () => {
+
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login"); // redirect to login page
+        },
+      },
+    });
+
+  }
 
   return (
     <SidebarMenu>
@@ -99,29 +109,7 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>
