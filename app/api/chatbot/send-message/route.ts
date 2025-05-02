@@ -3,7 +3,7 @@
 import { chat, message } from "@/db/schemas";
 import { db } from "@/drizzle";
 import { auth } from "@/lib/auth";
-import { GoogleGenAI, Type } from "@google/genai";
+import { FunctionCallingConfigMode, GoogleGenAI, Type } from "@google/genai";
 import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -74,6 +74,11 @@ export async function POST(request: NextRequest) {
 
     config: {
       systemInstruction,
+      toolConfig: {
+        functionCallingConfig: {
+          mode: FunctionCallingConfigMode.ANY,
+        },
+      },
       tools: [
         {
           functionDeclarations: [queryDatabaseFunctionDeclaration],

@@ -20,6 +20,7 @@ export const queryDatabaseFunctionDeclaration = {
 };
 
 function executeQuery({ query }: { query: string }) {
+  console.log("query", query);
   return db.execute(query);
 }
 
@@ -27,6 +28,7 @@ export async function decideFunction(geminiChat: Chat, content: string) {
   const response = await geminiChat.sendMessage({
     message: content,
   });
+
   if (response.functionCalls && response.functionCalls.length > 0) {
     const functionCall = response.functionCalls[0]; // Assuming one function call
     console.log(`Function to call: ${functionCall.name}`);
@@ -78,7 +80,7 @@ export async function getSystemInstruction() {
     });
   }
 
-  const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question.`;
+  const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question. You need to format the query results in a table. You need to always call the function queryDatabaseFunctionDeclaration.`;
 
   return introduction + "\n\n" + JSON.stringify(groupedSchema);
 }
