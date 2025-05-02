@@ -59,7 +59,7 @@ export async function getSystemInstruction() {
         ORDER BY table_schema, table_name, ordinal_position;
       `);
 
-  const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question.`;
+  const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question. The table of the database is chat, message, customer, geolocation, orderItem, orderPayment, orderReview, order, product, seller and productCategoryNameTranslation. You can only make the queries with this tables`;
 
   return introduction + "\n\n" + JSON.stringify(databaseSchema);
 }

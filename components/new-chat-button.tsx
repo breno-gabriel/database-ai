@@ -26,7 +26,6 @@ export default function NewChatButton() {
         },
         onSuccess(data) {
             console.log("Chat created successfully:", data);
-            // Redirect to the chat page or perform any other action
             router.push(`/chat/${data.chatId}`);
         },
     });
@@ -40,7 +39,7 @@ export default function NewChatButton() {
                 <TooltipTrigger asChild>
                     <Button
                         className="mt-4 text-lg cursor-pointer"
-                        disabled={isPending || isSuccess}
+                        disabled={isPending}
                         onClick={() => mutate()}
                     >
                         <MessageCirclePlus />

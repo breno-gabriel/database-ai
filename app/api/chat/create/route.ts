@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 export async function POST() {
   try {
     const session = await auth.api.getSession({
-      headers: await headers(), //some endpoint might require headers
+      headers: await headers(), 
     });
 
     if (!session?.user.id) {
