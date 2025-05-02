@@ -3,7 +3,7 @@
 import { chat, message } from "@/db/schemas";
 import { db } from "@/drizzle";
 import { auth } from "@/lib/auth";
-import { GoogleGenAI, Type } from "@google/genai";
+import { FunctionCallingConfigMode, GoogleGenAI, Type } from "@google/genai";
 import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -68,20 +68,26 @@ export async function POST(request: NextRequest) {
 
   const systemInstruction = await getSystemInstruction();
 
-  console.log("systemInstruction", systemInstruction);
-
   const geminiChat = ai.chats.create({
     model: "gemini-2.0-flash",
     history: chatHistory,
 
     config: {
       systemInstruction,
+      toolConfig: {
+        functionCallingConfig: {
+          mode: FunctionCallingConfigMode.ANY,
+        },
+      },
+      tools: [
+        {
+          functionDeclarations: [queryDatabaseFunctionDeclaration],
+        },
+      ],
     },
   });
 
-  const resultQuery = await decideFunction(geminiChat, content);
-
-  console.log("resultQuery", resultQuery);
+  await decideFunction(geminiChat, content);
 
   const response = await geminiChat.sendMessageStream({
     message: content,
