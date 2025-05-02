@@ -26,13 +26,6 @@ function executeQuery({ query }: { query: string }) {
 export async function decideFunction(geminiChat: Chat, content: string) {
   const response = await geminiChat.sendMessage({
     message: content,
-    config: {
-      tools: [
-        {
-          functionDeclarations: [queryDatabaseFunctionDeclaration],
-        },
-      ],
-    },
   });
   if (response.functionCalls && response.functionCalls.length > 0) {
     const functionCall = response.functionCalls[0]; // Assuming one function call
@@ -47,19 +40,45 @@ export async function decideFunction(geminiChat: Chat, content: string) {
 }
 
 export async function getSystemInstruction() {
-  const databaseSchema = await db.execute(`
+  const result = await db.execute(`
         SELECT 
-          table_schema, 
-          table_name, 
-          column_name, 
-          data_type, 
+          table_schema,
+          table_name,
+          column_name,
+          data_type,
           is_nullable
         FROM information_schema.columns
         WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
         ORDER BY table_schema, table_name, ordinal_position;
       `);
 
+  // Step 2: Group by table
+  const groupedSchema: Record<
+    string,
+    {
+      schema: string;
+      table: string;
+      columns: { name: string; type: string; nullable: boolean }[];
+    }
+  > = {};
+
+  for (const row of result.rows) {
+    const key = `${row.table_schema}.${row.table_name}`;
+    if (!groupedSchema[key]) {
+      groupedSchema[key] = {
+        schema: row.table_schema as string,
+        table: row.table_name as string,
+        columns: [],
+      };
+    }
+    groupedSchema[key].columns.push({
+      name: row.column_name as string,
+      type: row.data_type as string,
+      nullable: row.is_nullable === "YES",
+    });
+  }
+
   const introduction = `You are a database expert. You are given a database schema and a question. You need to answer the question using the database schema. You can only use the database schema to answer the question. You can only use SQL to answer the question.`;
 
-  return introduction + "\n\n" + JSON.stringify(databaseSchema);
+  return introduction + "\n\n" + JSON.stringify(groupedSchema);
 }

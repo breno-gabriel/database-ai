@@ -68,20 +68,21 @@ export async function POST(request: NextRequest) {
 
   const systemInstruction = await getSystemInstruction();
 
-  console.log("systemInstruction", systemInstruction);
-
   const geminiChat = ai.chats.create({
     model: "gemini-2.0-flash",
     history: chatHistory,
 
     config: {
       systemInstruction,
+      tools: [
+        {
+          functionDeclarations: [queryDatabaseFunctionDeclaration],
+        },
+      ],
     },
   });
 
-  const resultQuery = await decideFunction(geminiChat, content);
-
-  console.log("resultQuery", resultQuery);
+  await decideFunction(geminiChat, content);
 
   const response = await geminiChat.sendMessageStream({
     message: content,
