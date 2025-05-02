@@ -3,11 +3,16 @@
 import { chat, message } from "@/db/schemas";
 import { db } from "@/drizzle";
 import { auth } from "@/lib/auth";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  decideFunction,
+  getSystemInstruction,
+  queryDatabaseFunctionDeclaration,
+} from "./utils";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
 
@@ -61,10 +66,22 @@ export async function POST(request: NextRequest) {
     parts: [{ text: message.content }],
   }));
 
+  const systemInstruction = await getSystemInstruction();
+
+  console.log("systemInstruction", systemInstruction);
+
   const geminiChat = ai.chats.create({
     model: "gemini-2.0-flash",
     history: chatHistory,
+
+    config: {
+      systemInstruction,
+    },
   });
+
+  const resultQuery = await decideFunction(geminiChat, content);
+
+  console.log("resultQuery", resultQuery);
 
   const response = await geminiChat.sendMessageStream({
     message: content,
@@ -73,7 +90,7 @@ export async function POST(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       for await (const chunk of response) {
-        console.log(chunk.text); // log the chunk text
+        // log the chunk text
         if (chunk.text) {
           controller.enqueue(new TextEncoder().encode(chunk.text));
         }
