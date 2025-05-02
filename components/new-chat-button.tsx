@@ -6,6 +6,14 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { MessageCirclePlus } from 'lucide-react';
 
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+
 
 export default function NewChatButton() {
 
@@ -25,13 +33,29 @@ export default function NewChatButton() {
 
     return (
 
-        <Button
-            className="mt-4 text-lg cursor-pointer"
-            disabled={isPending || isSuccess}
-            onClick={() => mutate()}
-        >
-            <MessageCirclePlus />
-        </Button>
+        <TooltipProvider>
+
+            <Tooltip>
+
+                <TooltipTrigger asChild>
+                    <Button
+                        className="mt-4 text-lg cursor-pointer"
+                        disabled={isPending || isSuccess}
+                        onClick={() => mutate()}
+                    >
+                        <MessageCirclePlus />
+                    </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                    <p>Criar novo chat</p>
+                </TooltipContent>
+
+            </Tooltip>
+
+        </TooltipProvider>
+
+
 
     );
 

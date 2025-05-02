@@ -25,7 +25,7 @@ export function NavLogo() {
 
           </div>
 
-          <div className="pb-4 pr-2">
+          <div className="pb-4 pr-2 transform transition-transform duration-300 hover:scale-110">
             <NewChatButton />
           </div>
 

@@ -21,9 +21,9 @@ export default function ChatLanding() {
   });
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">Bem-vindo ao Database AI</h1>
+      <h1 className="text-2xl font-bold">Bem-vindo ao Database AI 🤖</h1>
       <Button
-        className="mt-4 text-lg cursor-pointer"
+        className="mt-4 text-lg cursor-pointer transform transition-transform duration-300 hover:scale-110"
         disabled={isPending || isSuccess}
         onClick={() => mutate()}
       >
