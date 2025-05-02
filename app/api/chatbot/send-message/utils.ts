@@ -20,7 +20,6 @@ export const queryDatabaseFunctionDeclaration = {
 };
 
 function executeQuery({ query }: { query: string }) {
-  console.log("query", query);
   return db.execute(query);
 }
 
@@ -28,15 +27,17 @@ export async function decideFunction(geminiChat: Chat, content: string) {
   const response = await geminiChat.sendMessage({
     message: content,
   });
+  console.log("response.text", response.text);
 
   if (response.functionCalls && response.functionCalls.length > 0) {
     const functionCall = response.functionCalls[0]; // Assuming one function call
     console.log(`Function to call: ${functionCall.name}`);
     console.log(`Arguments: ${JSON.stringify(functionCall.args)}`);
+
     return executeQuery(functionCall.args as { query: string });
   } else {
     console.log("No function call found in the response.");
-    console.log("response.text", response.text);
+
     return response.text;
   }
 }
@@ -65,7 +66,7 @@ export async function getSystemInstruction() {
   > = {};
 
   for (const row of result.rows) {
-    const key = `${row.table_schema}.${row.table_name}`;
+    const key = `${row.table_name}`;
     if (!groupedSchema[key]) {
       groupedSchema[key] = {
         schema: row.table_schema as string,
