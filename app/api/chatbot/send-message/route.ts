@@ -68,7 +68,12 @@ export async function POST(request: NextRequest) {
 
   const geminiChat = ai.chats.create({
     model: "gemini-2.0-flash",
+
     history: chatHistory,
+    config: {
+      systemInstruction:
+        "You're a database expert. You need to format the query results in table.",
+    },
   });
 
   const result = await decideFunction(geminiChat, content);
@@ -77,7 +82,7 @@ export async function POST(request: NextRequest) {
   const response = await geminiChat.sendMessageStream({
     message: result
       ? `${content}. Esse é o resultado da query: ${JSON.stringify(
-          result.rows as any
+          result.rows.slice(0, 5) as any
         )}`
       : content,
   });
