@@ -23,7 +23,7 @@ export default function ChatLanding() {
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold">Bem-vindo ao Database AI</h1>
       <Button
-        className="mt-4 text-lg"
+        className="mt-4 text-lg cursor-pointer"
         disabled={isPending || isSuccess}
         onClick={() => mutate()}
       >

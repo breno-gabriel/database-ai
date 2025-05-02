@@ -1,6 +1,5 @@
 "use client"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -11,15 +10,14 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "sonner";
-import { z } from 'zod';
-import { useMutation } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { authClient } from "@/lib/auth-client"
+import { cn } from "@/lib/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import { Form } from "./ui/form"
-import { message } from "@/db/schemas"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from 'zod'
 
 const signUpSchema = z
   .object({
