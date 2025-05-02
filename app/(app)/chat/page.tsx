@@ -15,7 +15,7 @@ export default function ChatLanding() {
     },
     onSuccess(data) {
       console.log("Chat created successfully:", data);
-      // Redirect to the chat page or perform any other action
+      
       router.push(`/chat/${data.chatId}`);
     },
   });
@@ -27,7 +27,7 @@ export default function ChatLanding() {
         disabled={isPending || isSuccess}
         onClick={() => mutate()}
       >
-        Criar novo Chat <PlusCircle />
+        Iniciar uma conversa   <PlusCircle />
       </Button>
     </div>
   );
