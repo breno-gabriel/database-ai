@@ -4,9 +4,10 @@ import { db } from "@/drizzle";
 import "dotenv/config";
 
 async function main() {
-  const customers = await db.select().from(customer);
+  console.log("Deleting geolocation");
+  await db.delete(geolocation);
 
-  console.log(customers);
+  console.log("Geolocation deleted");
 }
 
 // Em CommonJS, para usar await no topo, precisa fazer isso:
