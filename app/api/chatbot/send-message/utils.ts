@@ -5,9 +5,7 @@ import {
   GoogleGenAI,
   Type,
 } from "@google/genai";
-import "dotenv/config";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
 export const queryDatabaseFunctionDeclaration = {
   name: "query_database",
   description: "Executes a SQL SELECT query on the application database.",
@@ -30,47 +28,74 @@ function executeQuery({ query }: { query: string }) {
 }
 
 export async function decideFunction(geminiChat: Chat, content: string) {
-  try {
-    const systemInstruction = await getSystemInstruction();
-    const response = await geminiChat.sendMessage({
-      message: content,
-      config: {
-        systemInstruction,
-        toolConfig: {
-          functionCallingConfig: {
-            mode: FunctionCallingConfigMode.ANY,
+  const maxRetries = 5;
+  let lastErrorMessage = "";
+  let attempt = 0;
+
+  const systemInstruction = getSystemInstruction();
+
+  while (attempt < maxRetries) {
+    try {
+      const messageWithError =
+        attempt === 0
+          ? content
+          : `${content}\n\nPrevious error: ${lastErrorMessage}`;
+
+      const response = await geminiChat.sendMessage({
+        message: messageWithError,
+        config: {
+          systemInstruction,
+          toolConfig: {
+            functionCallingConfig: {
+              mode: FunctionCallingConfigMode.ANY,
+            },
           },
+
+          tools: [
+            {
+              functionDeclarations: [queryDatabaseFunctionDeclaration],
+            },
+          ],
         },
+      });
 
-        tools: [
-          {
-            functionDeclarations: [queryDatabaseFunctionDeclaration],
-          },
-        ],
-      },
-    });
-    console.log("response.text", response.text);
-    console.log("response.prompt_feedback", response.promptFeedback);
+      console.log("response.text", response.text);
+      console.log("response.prompt_feedback", response.promptFeedback);
 
-    if (response.functionCalls && response.functionCalls.length > 0) {
-      const functionCall = response.functionCalls[0]; // Assuming one function call
-      console.log(`Function to call: ${functionCall.name}`);
-      console.log(`Arguments: ${JSON.stringify(functionCall.args)}`);
+      if (response.functionCalls && response.functionCalls.length > 0) {
+        const functionCall = response.functionCalls[0];
+        console.log(`Function to call: ${functionCall.name}`);
+        console.log(`Arguments: ${JSON.stringify(functionCall.args)}`);
 
-      return executeQuery(functionCall.args as { query: string });
-    } else {
-      console.log("No function call found in the response.");
+        try {
+          const result = await executeQuery(
+            functionCall.args as { query: string }
+          );
 
-      return;
+          return { result, error: null };
+        } catch (queryError) {
+          lastErrorMessage = `Query error: ${(queryError as Error).message}`;
+          console.warn(`Attempt ${attempt + 1} failed:`, lastErrorMessage);
+        }
+      } else {
+        console.error("No function call found in the response.");
+        break; // No function call to retry
+      }
+    } catch (chatError) {
+      lastErrorMessage = `Gemini error: ${(chatError as Error).message}`;
+      console.warn(`Attempt ${attempt + 1} failed:`, lastErrorMessage);
     }
-    return;
-  } catch (error) {
-    console.error("Error in decideFunction:", error);
-    return;
+
+    attempt++;
   }
+
+  return {
+    result: null,
+    error: `Failed after ${maxRetries} attempts. Last error: ${lastErrorMessage}`,
+  };
 }
 
-export async function getSystemInstruction() {
+export function getSystemInstruction() {
   const introduction = `You are a database expert. You are given a postgres database schema and a question. You need to answer the question using the postgres database schema. You can only use the postgres database schema to answer the question. You can only use SQL to answer the question. You like to answer with the columns as descriptive as possible.`;
 
   return introduction + "\n\n" + schema;

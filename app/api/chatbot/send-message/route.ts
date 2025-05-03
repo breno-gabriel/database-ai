@@ -78,14 +78,15 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const result = await decideFunction(geminiChat, content);
+  const { result, error } = await decideFunction(geminiChat, content);
 
-  console.log("result", result);
   const response = await geminiChat.sendMessageStream({
     message: result
       ? `${content}. Esse é o resultado da query: ${JSON.stringify(
           result.rows.slice(0, 5) as any
         )}`
+      : error
+      ? `${content}.  Esse é o resultado da query: ${error}`
       : content,
   });
 
