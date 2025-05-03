@@ -2,24 +2,23 @@ import { numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 
 export const chat = pgTable("chat", {
-  id: text().primaryKey(),
-  user_id: text()
+  id: text("id").primaryKey(),
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  created_at: timestamp().notNull(),
-  updated_at: timestamp().notNull(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
 
 export const message = pgTable("message", {
-  id: text().primaryKey(),
-  chat_id: text()
+  id: text("id").primaryKey(),
+  chatId: text("chat_id")
     .notNull()
     .references(() => chat.id, { onDelete: "cascade" }),
-  content: text().notNull(),
-  role: text().notNull(), // 'user' or 'chatbot'
-  send_at: timestamp().notNull(),
+  content: text("content").notNull(),
+  role: text("role").notNull(), // 'user' or 'chatbot'
+  sendAt: timestamp("send_at").notNull(),
 });
-
 export const customer = pgTable("customer", {
   id: text().primaryKey(),
   customer_unique_id: text().notNull(),

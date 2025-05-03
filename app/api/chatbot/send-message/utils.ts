@@ -76,103 +76,83 @@ export async function getSystemInstruction() {
   return introduction + "\n\n" + schema;
 }
 
-const schema = `CREATE TABLE "user" (
-  id TEXT PRIMARY KEY
-);
-
-CREATE TABLE chat (
+const schema = `CREATE TABLE customer (
   id TEXT PRIMARY KEY,
-  userId TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  createdAt TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP NOT NULL
-);
-
-CREATE TABLE message (
-  id TEXT PRIMARY KEY,
-  chatId TEXT NOT NULL REFERENCES chat(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  role TEXT NOT NULL, -- 'user' ou 'chatbot'
-  sendAt TIMESTAMP NOT NULL
-);
-
-CREATE TABLE customer (
-  id TEXT PRIMARY KEY,
-  customerUniqueId TEXT NOT NULL,
-  customerZipCodePrefix TEXT NOT NULL,
-  customerCity TEXT NOT NULL,
-  customerState TEXT NOT NULL
+  customer_unique_id TEXT NOT NULL,
+  customer_zip_code_prefix TEXT NOT NULL,
+  customer_city TEXT NOT NULL,
+  customer_state TEXT NOT NULL
 );
 
 CREATE TABLE geolocation (
-  geolocationZipCodePrefix TEXT,
-  geolocationLat NUMERIC,
-  geolocationLng NUMERIC,
-  geolocationCity TEXT,
-  geolocationState TEXT
+  geolocation_zip_code_prefix TEXT,
+  geolocation_lat NUMERIC,
+  geolocation_lng NUMERIC,
+  geolocation_city TEXT,
+  geolocation_state TEXT
 );
 
-CREATE TABLE orderTable (
+CREATE TABLE order_table (
   id TEXT PRIMARY KEY,
-  customerId TEXT NOT NULL REFERENCES customer(id) ON DELETE CASCADE,
-  orderStatus TEXT NOT NULL,
-  orderPurchaseTimestamp TIMESTAMP,
-  orderApprovedAt TIMESTAMP,
-  orderDeliveredCarrierDate TIMESTAMP,
-  orderDeliveredCustomerDate TIMESTAMP,
-  orderEstimatedDeliveryDate TIMESTAMP
+  customer_id TEXT NOT NULL REFERENCES customer(id) ON DELETE CASCADE,
+  order_status TEXT NOT NULL,
+  order_purchase_timestamp TIMESTAMP,
+  order_approved_at TIMESTAMP,
+  order_delivered_carrier_date TIMESTAMP,
+  order_delivered_customer_date TIMESTAMP,
+  order_estimated_delivery_date TIMESTAMP
 );
 
 CREATE TABLE product (
   id TEXT PRIMARY KEY,
-  productCategoryName TEXT,
-  productNameLength NUMERIC,
-  productDescriptionLength NUMERIC,
-  productPhotosQty NUMERIC,
-  productWeightG NUMERIC,
-  productLengthCm NUMERIC,
-  productHeightCm NUMERIC,
-  productWidthCm NUMERIC
+  product_category_name TEXT,
+  product_name_length NUMERIC,
+  product_description_length NUMERIC,
+  product_photos_qty NUMERIC,
+  product_weight_g NUMERIC,
+  product_length_cm NUMERIC,
+  product_height_cm NUMERIC,
+  product_width_cm NUMERIC
 );
 
 CREATE TABLE seller (
   id TEXT PRIMARY KEY,
-  sellerZipCodePrefix TEXT,
-  sellerCity TEXT,
-  sellerState TEXT
+  seller_zip_code_prefix TEXT,
+  seller_city TEXT,
+  seller_state TEXT
 );
 
-CREATE TABLE orderItem (
+CREATE TABLE order_item (
   id NUMERIC,
-  orderId TEXT REFERENCES orderTable(id) ON DELETE CASCADE,
-  productId TEXT REFERENCES product(id) ON DELETE CASCADE,
-  sellerId TEXT REFERENCES seller(id) ON DELETE CASCADE,
-  shippingLimitDate TIMESTAMP,
+  order_id TEXT REFERENCES order_table(id) ON DELETE CASCADE,
+  product_id TEXT REFERENCES product(id) ON DELETE CASCADE,
+  seller_id TEXT REFERENCES seller(id) ON DELETE CASCADE,
+  shipping_limit_date TIMESTAMP,
   price NUMERIC,
-  freightValue NUMERIC
+  freight_value NUMERIC
 );
 
-CREATE TABLE orderPayment (
+CREATE TABLE order_payment (
   id TEXT,
-  orderId TEXT NOT NULL REFERENCES orderTable(id) ON DELETE CASCADE,
-  paymentSequential NUMERIC,
-  paymentType TEXT NOT NULL,
-  paymentInstallments NUMERIC,
-  paymentValue NUMERIC
+  order_id TEXT NOT NULL REFERENCES order_table(id) ON DELETE CASCADE,
+  payment_sequential NUMERIC,
+  payment_type TEXT NOT NULL,
+  payment_installments NUMERIC,
+  payment_value NUMERIC
 );
 
-CREATE TABLE orderReview (
-  reviewId TEXT,
-  orderId TEXT NOT NULL REFERENCES orderTable(id) ON DELETE CASCADE,
-  reviewScore NUMERIC,
-  reviewCommentTitle TEXT,
-  reviewCommentMessage TEXT,
-  reviewCreationDate TIMESTAMP,
-  reviewAnswerTimestamp TIMESTAMP
+CREATE TABLE order_review (
+  review_id TEXT,
+  order_id TEXT NOT NULL REFERENCES order_table(id) ON DELETE CASCADE,
+  review_score NUMERIC,
+  review_comment_title TEXT,
+  review_comment_message TEXT,
+  review_creation_date TIMESTAMP,
+  review_answer_timestamp TIMESTAMP
 );
 
-CREATE TABLE productCategoryNameTranslation (
-  productCategoryName TEXT PRIMARY KEY,
-  productCategoryNameEnglish TEXT NOT NULL
+CREATE TABLE product_category_name_translation (
+  product_category_name TEXT PRIMARY KEY,
+  product_category_name_english TEXT NOT NULL
 );
-
 `;
