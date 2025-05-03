@@ -18,15 +18,15 @@ export async function populateOrderPayments() {
       limit(async () => {
         await db.insert(orderPayment).values({
           id: item.order_id,
-          orderId: item.order_id,
-          paymentType: item.payment_type,
-          paymentInstallments: item.payment_installments
+          order_id: item.order_id,
+          payment_type: item.payment_type,
+          payment_installments: item.payment_installments
             ? +item.payment_installments
             : null,
-          paymentSequential: item.payment_sequential
+          payment_sequential: item.payment_sequential
             ? +item.payment_sequential
             : null,
-          paymentValue: item.payment_value ? +item.payment_value : null,
+          payment_value: item.payment_value ? +item.payment_value : null,
         });
 
         completed++;

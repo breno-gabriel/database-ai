@@ -10,6 +10,10 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../types";
+import shadcnAvatar from "@/public/shadcn-avatar.png";
+import logo from "@/public/logo-light.png";
+import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
 
 function ChatInput({
   handleSendMessage,
@@ -45,6 +49,8 @@ function ChatInput({
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const { data: session } = authClient.useSession();
 
   const { chatId } = useParams();
 
@@ -131,6 +137,31 @@ export default function ChatPage() {
 
       return;
     },
+
+    onError: (error) => {
+      console.error("Error sending message:", error);
+      const errorMessage = {
+        id: uuid(),
+        content: "Erro ao enviar mensagem",
+        role: "model" as any,
+        sendAt: new Date(),
+      };
+      setMessages((prev) => {
+        const tmp = [...prev];
+        const messageIndex = tmp.findIndex(
+          (msg) => msg.id === "streaming-chatbot"
+        );
+
+        tmp.splice(messageIndex, 1);
+        tmp.push(errorMessage);
+        return [...tmp];
+      });
+
+      axiosClient.post(`/api/message/create/${chatId}`, {
+        ...errorMessage,
+        chatId,
+      });
+    },
   });
 
   console.log("messages", messages);
@@ -160,10 +191,14 @@ export default function ChatPage() {
       <header className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
-            <AvatarFallback>CB</AvatarFallback>
+            <Image
+              src={logo}
+              alt="Logo"
+              sizes="100vw"
+              className="h-full w-full object-cover"
+            />
           </Avatar>
-          <h3 className="text-sm font-medium">Chatbot</h3>
+          <h3 className="text-sm font-medium">Database AI 🤖</h3>
         </div>
       </header>
       <div className="flex-1 flex flex-col-reverse gap-4 overflow-y-auto p-4">
@@ -183,8 +218,12 @@ export default function ChatPage() {
             >
               {message.role === "model" && (
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
-                  <AvatarFallback>CB</AvatarFallback>
+                  <Image
+                    src={logo}
+                    alt="Logo"
+                    sizes="100vw"
+                    className="h-full w-full object-cover"
+                  />
                 </Avatar>
               )}
               <div
@@ -198,8 +237,18 @@ export default function ChatPage() {
               </div>
               {message.role === "user" && (
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder-user.jpg" alt="You" />
-                  <AvatarFallback>YU</AvatarFallback>
+                  <AvatarImage
+                    src={session?.user.image ?? ""}
+                    alt={session?.user.name ?? "You"}
+                  />
+                  <AvatarFallback>
+                    <Image
+                      src={shadcnAvatar}
+                      alt="User Avatar"
+                      sizes="100vw"
+                      className="h-full w-full object-cover"
+                    />
+                  </AvatarFallback>
                 </Avatar>
               )}
             </div>

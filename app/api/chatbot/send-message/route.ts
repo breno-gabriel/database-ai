@@ -12,6 +12,7 @@ import {
   decideFunction,
   getSystemInstruction,
   queryDatabaseFunctionDeclaration,
+  schema,
 } from "./utils";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
@@ -66,31 +67,27 @@ export async function POST(request: NextRequest) {
     parts: [{ text: message.content }],
   }));
 
-  const systemInstruction = await getSystemInstruction();
-
   const geminiChat = ai.chats.create({
     model: "gemini-2.0-flash",
-    history: chatHistory,
 
+    history: chatHistory,
     config: {
-      systemInstruction,
-      toolConfig: {
-        functionCallingConfig: {
-          mode: FunctionCallingConfigMode.ANY,
-        },
-      },
-      tools: [
-        {
-          functionDeclarations: [queryDatabaseFunctionDeclaration],
-        },
-      ],
+      systemInstruction:
+        "You're a database expert. You need to format the query results in table. Always asks for further database questions if needed." +
+        schema,
     },
   });
 
-  await decideFunction(geminiChat, content);
+  const { result, error } = await decideFunction(geminiChat, content);
 
   const response = await geminiChat.sendMessageStream({
-    message: content,
+    message: result
+      ? `${content}. Esse é o resultado da query: ${JSON.stringify(
+          result.rows.slice(0, 5) as any
+        )}`
+      : error
+      ? `${content}.  Esse é o resultado da query: ${error}`
+      : content,
   });
 
   const stream = new ReadableStream({

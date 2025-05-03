@@ -19,8 +19,8 @@ export async function populateProductCategoryNameTranslation() {
     const tasks = result.map((item) =>
       limit(async () => {
         await db.insert(productCategoryNameTranslation).values({
-          productCategoryName: item.product_category_name,
-          productCategoryNameEnglish: item.product_category_name_english,
+          product_category_name: item.product_category_name,
+          product_category_name_english: item.product_category_name_english,
         });
 
         // Update progress

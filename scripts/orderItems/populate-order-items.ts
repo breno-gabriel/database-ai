@@ -19,12 +19,12 @@ export async function populateOrderItems() {
       limit(async () => {
         await db.insert(orderItem).values({
           id: item.order_item_id ? +item.order_item_id : null,
-          orderId: item.order_id,
-          productId: item.product_id,
-          sellerId: item.seller_id,
-          shippingLimitDate: parseCustomDate(item.shipping_limit_date),
+          order_id: item.order_id,
+          product_id: item.product_id,
+          seller_id: item.seller_id,
+          shipping_limit_date: parseCustomDate(item.shipping_limit_date),
           price: item.price ? +item.price : null,
-          freightValue: item.freight_value ? +item.freight_value : null,
+          freight_value: item.freight_value ? +item.freight_value : null,
         });
 
         completed++;

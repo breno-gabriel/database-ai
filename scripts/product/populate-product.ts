@@ -23,14 +23,28 @@ export async function populateProduct() {
         try {
           await db.insert(product).values({
             id: item.product_id,
-            productCategoryName: item.product_category_name,
-            productNameLength: item.product_name_length ? +item.product_name_length : null,
-            productDescriptionLength: item.product_description_length ? +item.product_description_length : null,
-            productPhotosQty: item.product_photos_qty ? +item.product_photos_qty : null,
-            productWeightG: item.product_weight_g ? +item.product_weight_g : null,
-            productLengthCm: item.product_length_cm ? +item.product_length_cm : null,   
-            productHeightCm: item.product_height_cm ? +item.product_height_cm : null,
-            productWidthCm: item.product_width_cm ? +item.product_width_cm : null,
+            product_category_name: item.product_category_name,
+            product_name_length: item.product_name_length
+              ? +item.product_name_length
+              : null,
+            product_description_length: item.product_description_length
+              ? +item.product_description_length
+              : null,
+            product_photos_qty: item.product_photos_qty
+              ? +item.product_photos_qty
+              : null,
+            product_weight_g: item.product_weight_g
+              ? +item.product_weight_g
+              : null,
+            product_length_cm: item.product_length_cm
+              ? +item.product_length_cm
+              : null,
+            product_height_cm: item.product_height_cm
+              ? +item.product_height_cm
+              : null,
+            product_width_cm: item.product_width_cm
+              ? +item.product_width_cm
+              : null,
           });
 
           completed++;

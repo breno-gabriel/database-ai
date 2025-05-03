@@ -23,13 +23,15 @@ export async function populateOrderReview() {
       limit(async () => {
         try {
           await db.insert(orderReview).values({
-            reviewId: item.review_id,
-            orderId: item.order_id,
-            reviewScore: item.review_score ? +item.review_score : null,
-            reviewCommentTitle: item.review_comment_title,
-            reviewCommentMessage: item.review_comment_message,
-            reviewCreationDate: parseCustomDate(item.review_creation_date),
-            reviewAnswerTimestamp: parseCustomDate(item.review_answer_timestamp),
+            review_id: item.review_id,
+            order_id: item.order_id,
+            review_score: item.review_score ? +item.review_score : null,
+            review_comment_title: item.review_comment_title,
+            review_comment_message: item.review_comment_message,
+            review_creation_date: parseCustomDate(item.review_creation_date),
+            review_answer_timestamp: parseCustomDate(
+              item.review_answer_timestamp
+            ),
           });
 
           completed++;

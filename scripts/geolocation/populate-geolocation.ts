@@ -21,11 +21,11 @@ export async function populateGeolocation() {
         const lng: any = item.geolocation_lng ? +item.geolocation_lng : null;
 
         await db.insert(geolocation).values({
-          geolocationZipCodePrefix: item.geolocation_zip_code_prefix,
-          geolocationLat: lat,
-          geolocationLng: lng,
-          geolocationCity: item.geolocation_city,
-          geolocationState: item.geolocation_state,
+          geolocation_zip_code_prefix: item.geolocation_zip_code_prefix,
+          geolocation_lat: lat,
+          geolocation_lng: lng,
+          geolocation_city: item.geolocation_city,
+          geolocation_state: item.geolocation_state,
         });
 
         // Update progress

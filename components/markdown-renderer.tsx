@@ -1,8 +1,16 @@
-import "highlight.js/styles/github.css"; // or another highlight.js theme
+import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableHeader,
+} from "./ui/table";
 
 export function MarkdownRenderer({ content }: { content: string }) {
   return (
@@ -15,14 +23,11 @@ export function MarkdownRenderer({ content }: { content: string }) {
             {children}
           </a>
         ),
-        code: ({ className, children }) => {
-          return (
-            <pre>
-              <code className={className}>{children}</code>
-            </pre>
-          );
-        },
-
+        code: ({ className, children }) => (
+          <pre>
+            <code className={className}>{children}</code>
+          </pre>
+        ),
         h1: ({ children, ...props }) => (
           <h1 className="font-bold text-6xl" {...props}>
             {children}
@@ -52,6 +57,20 @@ export function MarkdownRenderer({ content }: { content: string }) {
             {children}
           </ol>
         ),
+        table: ({ children }) => (
+          <div className="border bg-white my-4 mx-2">
+            <Table>{children}</Table>
+          </div>
+        ),
+        thead: ({ children }) => (
+          <TableHeader className="bg-primary/60">{children}</TableHeader>
+        ),
+        tbody: ({ children }) => <TableBody>{children}</TableBody>,
+        tr: ({ children }) => <TableRow>{children}</TableRow>,
+        th: ({ children }) => (
+          <TableHead className="text-white">{children}</TableHead>
+        ),
+        td: ({ children }) => <TableCell className="">{children}</TableCell>,
       }}
     >
       {content}

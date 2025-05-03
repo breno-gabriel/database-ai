@@ -19,19 +19,19 @@ export async function populateOrder() {
       limit(async () => {
         await db.insert(order).values({
           id: item.order_id,
-          customerId: item.customer_id,
-          orderStatus: item.order_status,
-          orderPurchaseTimestamp: parseCustomDate(
+          customer_id: item.customer_id,
+          order_status: item.order_status,
+          order_purchase_timestamp: parseCustomDate(
             item.order_purchase_timestamp
           ),
-          orderApprovedAt: parseCustomDate(item.order_approved_at),
-          orderDeliveredCarrierDate: parseCustomDate(
+          order_approved_at: parseCustomDate(item.order_approved_at),
+          order_delivered_carrier_date: parseCustomDate(
             item.order_delivered_carrier_date
           ),
-          orderDeliveredCustomerDate: parseCustomDate(
+          order_delivered_customer_date: parseCustomDate(
             item.order_delivered_customer_date
           ),
-          orderEstimatedDeliveryDate: parseCustomDate(
+          order_estimated_delivery_date: parseCustomDate(
             item.order_estimated_delivery_date
           ),
         });
