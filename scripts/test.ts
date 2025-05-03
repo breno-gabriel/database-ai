@@ -4,7 +4,9 @@ import { db } from "@/drizzle";
 import "dotenv/config";
 
 async function main() {
-  const result = await getSystemInstruction();
+  const result = await db.execute(
+    ` SELECT id, "productCategoryName" FROM product ORDER BY "productWeightG" DESC LIMIT 5`
+  );
 
   console.log(result);
 }

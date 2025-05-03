@@ -19,10 +19,10 @@ export async function populateCustomers() {
       limit(async () => {
         await db.insert(customer).values({
           id: item.customer_id,
-          customerUniqueId: item.customer_unique_id,
-          customerZipCodePrefix: item.customer_zip_code_prefix,
-          customerCity: item.customer_city,
-          customerState: item.customer_state,
+          customer_unique_id: item.customer_unique_id,
+          customer_zip_code_prefix: item.customer_zip_code_prefix,
+          customer_city: item.customer_city,
+          customer_state: item.customer_state,
         });
 
         // Update progress
