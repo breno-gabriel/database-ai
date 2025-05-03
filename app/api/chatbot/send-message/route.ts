@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     message: result
       ? `${content}. Esse é o resultado da query: ${JSON.stringify(
           //  eslint-disable-next-line @typescript-eslint/no-explicit-any
-          result.rows.slice(0, 5) as any
+          result.rows.slice(0, 10) as any
         )}`
       : error
       ? `${content}.  Esse é o resultado da query: ${error}`
