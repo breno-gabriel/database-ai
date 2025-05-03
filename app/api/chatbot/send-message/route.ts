@@ -12,6 +12,7 @@ import {
   decideFunction,
   getSystemInstruction,
   queryDatabaseFunctionDeclaration,
+  schema,
 } from "./utils";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
@@ -72,7 +73,8 @@ export async function POST(request: NextRequest) {
     history: chatHistory,
     config: {
       systemInstruction:
-        "You're a database expert. You need to format the query results in table.",
+        "You're a database expert. You need to format the query results in table. Always asks for further database questions if needed." +
+        schema,
     },
   });
 

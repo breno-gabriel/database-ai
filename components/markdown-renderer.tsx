@@ -58,19 +58,19 @@ export function MarkdownRenderer({ content }: { content: string }) {
           </ol>
         ),
         table: ({ children }) => (
-          <div className="border bg-white">
+          <div className="border bg-white my-4 mx-2">
             <Table>{children}</Table>
           </div>
         ),
         thead: ({ children }) => (
-          <TableHeader className="bg-muted-foreground">{children}</TableHeader>
+          <TableHeader className="bg-primary/60">{children}</TableHeader>
         ),
         tbody: ({ children }) => <TableBody>{children}</TableBody>,
         tr: ({ children }) => <TableRow>{children}</TableRow>,
-        th: ({ children }) => <TableHead>{children}</TableHead>,
-        td: ({ children }) => (
-          <TableCell className="tex-center">{children}</TableCell>
+        th: ({ children }) => (
+          <TableHead className="text-white">{children}</TableHead>
         ),
+        td: ({ children }) => <TableCell className="">{children}</TableCell>,
       }}
     >
       {content}

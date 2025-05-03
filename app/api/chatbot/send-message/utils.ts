@@ -71,12 +71,12 @@ export async function decideFunction(geminiChat: Chat, content: string) {
 }
 
 export async function getSystemInstruction() {
-  const introduction = `You are a database expert. You are given a postgres database schema and a question. You need to answer the question using the postgres database schema. You can only use the postgres database schema to answer the question. You can only use SQL to answer the question.`;
+  const introduction = `You are a database expert. You are given a postgres database schema and a question. You need to answer the question using the postgres database schema. You can only use the postgres database schema to answer the question. You can only use SQL to answer the question. You like to answer with the columns as descriptive as possible.`;
 
   return introduction + "\n\n" + schema;
 }
 
-const schema = `CREATE TABLE customer (
+export const schema = `CREATE TABLE customer (
   id TEXT PRIMARY KEY,
   customer_unique_id TEXT NOT NULL,
   customer_zip_code_prefix TEXT NOT NULL,

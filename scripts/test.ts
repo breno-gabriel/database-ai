@@ -5,7 +5,7 @@ import "dotenv/config";
 
 async function main() {
   const result = await db.execute(
-    ` SELECT id, "productCategoryName" FROM product ORDER BY "productWeightG" DESC LIMIT 5`
+    ` SELECT s.seller_id, COUNT(oi.product_id) AS product_count FROM order_item AS oi JOIN seller AS s ON oi.seller_id = s.id GROUP BY s.seller_id ORDER BY product_count DESC LIMIT 5`
   );
 
   console.log(result);
