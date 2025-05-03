@@ -10,8 +10,8 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../types";
-import shadcnAvatar from "@/public/shadcn-avatar.png";
-import logo from "@/public/logo-light.png";
+import shadcnAvatar from "../../../../public/shadcn-avatar.png";
+import logo from "../../../../public/logo-light.png";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 
