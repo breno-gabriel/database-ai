@@ -143,6 +143,7 @@ export default function ChatPage() {
       const errorMessage = {
         id: uuid(),
         content: "Erro ao enviar mensagem",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         role: "model" as any,
         sendAt: new Date(),
       };
