@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../types";
+import { toast } from "sonner";
 
 function ChatInput({
   handleSendMessage,
@@ -131,6 +132,31 @@ export default function ChatPage() {
 
       return;
     },
+
+    onError: (error) => {
+      console.error("Error sending message:", error);
+      const errorMessage = {
+        id: uuid(),
+        content: "Erro ao enviar mensagem",
+        role: "model" as any,
+        sendAt: new Date(),
+      };
+      setMessages((prev) => {
+        const tmp = [...prev];
+        const messageIndex = tmp.findIndex(
+          (msg) => msg.id === "streaming-chatbot"
+        );
+
+        tmp.splice(messageIndex, 1);
+        tmp.push(errorMessage);
+        return [...tmp];
+      });
+
+      axiosClient.post(`/api/message/create/${chatId}`, {
+        ...errorMessage,
+        chatId,
+      });
+    },
   });
 
   console.log("messages", messages);
@@ -161,9 +187,9 @@ export default function ChatPage() {
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
-            <AvatarFallback>CB</AvatarFallback>
+            <AvatarFallback>AI</AvatarFallback>
           </Avatar>
-          <h3 className="text-sm font-medium">Chatbot</h3>
+          <h3 className="text-sm font-medium">Database AI 🤖</h3>
         </div>
       </header>
       <div className="flex-1 flex flex-col-reverse gap-4 overflow-y-auto p-4">
@@ -184,7 +210,7 @@ export default function ChatPage() {
               {message.role === "model" && (
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder-user.jpg" alt="Chatbot" />
-                  <AvatarFallback>CB</AvatarFallback>
+                  <AvatarFallback>AI</AvatarFallback>
                 </Avatar>
               )}
               <div
