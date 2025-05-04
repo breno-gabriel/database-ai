@@ -222,10 +222,13 @@ export default function ChatPage() {
         </div>
       </header>
       <div
-        className={cn("flex-1 flex flex-col-reverse gap-4 overflow-y-auto ", {
-          "body-width-sidebar": open && !isMobile,
-          "w-[100vw]": !open || isMobile,
-        })}
+        className={cn(
+          "flex-1 flex flex-col-reverse gap-4 overflow-y-auto px-4 py-2 ",
+          {
+            "body-width-sidebar": open && !isMobile,
+            "w-[100vw]": !open || isMobile,
+          }
+        )}
       >
         {isLoading && <div>Loading...</div>}
         {isError && <div>Error loading messages</div>}
