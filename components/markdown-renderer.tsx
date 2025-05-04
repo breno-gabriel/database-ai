@@ -54,9 +54,17 @@ export function MarkdownRenderer({ content }: { content: string }) {
           ),
           code: ({ className, children }) => {
             const language = className?.replace("language-", "") || "";
+
+            if (!language) {
+              return (
+                <code className={`text-sm px-1 rounded bg-zinc-300 `}>
+                  {children}
+                </code>
+              );
+            }
             return (
               <code
-                className={`text-sm px-1 rounded ${
+                className={`text-sm px-1 rounded  ${
                   language ? `language-${language}` : ""
                 }`}
               >
@@ -71,7 +79,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
             </div>
           ),
           thead: ({ children }) => (
-            <TableHeader className="bg-zinc-100">{children}</TableHeader>
+            <TableHeader className="bg-primary/60">{children}</TableHeader>
           ),
           tbody: ({ children }) => <TableBody>{children}</TableBody>,
           tr: ({ children }) => (
