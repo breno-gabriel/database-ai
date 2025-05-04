@@ -18,9 +18,9 @@ export async function populateSeller() {
       limit(async () => {
         await db.insert(seller).values({
           id: item.seller_id,
-          sellerZipCodePrefix: item.seller_zipcode_prefix,
-          sellerCity: item.seller_city,
-          sellerState: item.seller_state,
+          seller_zip_code_prefix: item.seller_zipcode_prefix,
+          seller_city: item.seller_city,
+          seller_state: item.seller_state,
         });
 
         // Update progress

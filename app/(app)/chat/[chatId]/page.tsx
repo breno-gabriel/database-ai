@@ -10,10 +10,13 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../types";
-import shadcnAvatar from "@/public/shadcn-avatar.png";
-import logo from "@/public/logo-light.png";
+import shadcnAvatar from "../../../../public/shadcn-avatar.png";
+import logo from "../../../../public/logo-light.png";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
+import { Menu } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function ChatInput({
   handleSendMessage,
@@ -53,6 +56,9 @@ export default function ChatPage() {
   const { data: session } = authClient.useSession();
 
   const { chatId } = useParams();
+
+  const { toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
 
   const { isLoading, isError } = useQuery({
     queryKey: ["chat-messages"],
@@ -143,6 +149,7 @@ export default function ChatPage() {
       const errorMessage = {
         id: uuid(),
         content: "Erro ao enviar mensagem",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         role: "model" as any,
         sendAt: new Date(),
       };
@@ -190,6 +197,18 @@ export default function ChatPage() {
     <div className="flex body-height flex-col rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
       <header className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
         <div className="flex items-center gap-3">
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mr-2"
+              onClick={() => {
+                toggleSidebar();
+              }}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          )}
           <Avatar className="h-8 w-8">
             <Image
               src={logo}
