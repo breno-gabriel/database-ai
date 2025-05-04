@@ -1,5 +1,5 @@
 "use server";
-
+//  eslint-disable @typescript-eslint/no-explicit-any
 import { chat, message } from "@/db/schemas";
 import { db } from "@/drizzle";
 import { auth } from "@/lib/auth";
@@ -8,10 +8,7 @@ import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  decideFunction,
-  schema
-} from "./utils";
+import { decideFunction, schema } from "./utils";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
 
@@ -81,7 +78,8 @@ export async function POST(request: NextRequest) {
   const response = await geminiChat.sendMessageStream({
     message: result
       ? `${content}. Esse é o resultado da query: ${JSON.stringify(
-          result.rows.slice(0, 5) as any
+          //  eslint-disable-next-line @typescript-eslint/no-explicit-any
+          result.rows.slice(0, 10) as any
         )}`
       : error
       ? `${content}.  Esse é o resultado da query: ${error}`

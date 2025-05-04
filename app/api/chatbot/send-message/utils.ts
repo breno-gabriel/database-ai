@@ -1,10 +1,5 @@
 import { db } from "@/drizzle";
-import {
-  Chat,
-  FunctionCallingConfigMode,
-  GoogleGenAI,
-  Type,
-} from "@google/genai";
+import { Chat, FunctionCallingConfigMode, Type } from "@google/genai";
 
 export const queryDatabaseFunctionDeclaration = {
   name: "query_database",

@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ChevronsUpDown,
-  LogOut
-} from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
@@ -21,7 +18,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
-import shadcnAvatar from "@/public/shadcn-avatar.png";
+import shadcnAvatar from "../public/shadcn-avatar.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -33,7 +30,6 @@ export function NavUser() {
   const router = useRouter();
 
   const handleLogOut = async () => {
-
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
@@ -41,8 +37,7 @@ export function NavUser() {
         },
       },
     });
-
-  }
+  };
 
   return (
     <SidebarMenu>
