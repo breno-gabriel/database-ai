@@ -205,54 +205,59 @@ export default function ChatPage() {
         {isLoading && <div>Loading...</div>}
         {isError && <div>Error loading messages</div>}
         {messages
-          .sort(
-            (a, b) =>
-              new Date(b.sendAt).getTime() - new Date(a.sendAt).getTime()
-          )
-          .map((message) => (
-            <div
-              key={message.id}
-              className={`flex items-start gap-3 ${
-                message.role === "user" ? "justify-end" : ""
-              }`}
-            >
-              {message.role === "model" && (
-                <Avatar className="h-8 w-8">
-                  <Image
-                    src={logo}
-                    alt="Logo"
-                    sizes="100vw"
-                    className="h-full w-full object-cover"
-                  />
-                </Avatar>
-              )}
-              <div
-                className={`rounded-lg border border-gray-200 bg-gray-100 p-3 text-sm dark:border-gray-800 dark:bg-gray-800 ${
-                  message.role === "user"
-                    ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
-                    : ""
-                }`}
-              >
-                <MarkdownRenderer content={message.content} />
-              </div>
-              {message.role === "user" && (
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={session?.user.image ?? ""}
-                    alt={session?.user.name ?? "You"}
-                  />
-                  <AvatarFallback>
-                    <Image
-                      src={shadcnAvatar}
-                      alt="User Avatar"
-                      sizes="100vw"
-                      className="h-full w-full object-cover"
-                    />
-                  </AvatarFallback>
-                </Avatar>
-              )}
-            </div>
-          ))}
+  .sort(
+    (a, b) =>
+      new Date(b.sendAt).getTime() - new Date(a.sendAt).getTime()
+  )
+  .map((message) => {
+    if (message.role === "model") {
+      console.log("Chatbot message:", message.content); // Log the chatbot message
+    }
+    return (
+      <div
+        key={message.id}
+        className={`flex items-start gap-3 ${
+          message.role === "user" ? "justify-end" : ""
+        }`}
+      >
+        {message.role === "model" && (
+          <Avatar className="h-8 w-8">
+            <Image
+              src={logo}
+              alt="Logo"
+              sizes="100vw"
+              className="h-full w-full object-cover"
+            />
+          </Avatar>
+        )}
+        <div
+          className={`rounded-lg border border-gray-200 bg-gray-100 p-3 text-sm dark:border-gray-800 dark:bg-gray-800 ${
+            message.role === "user"
+              ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
+              : ""
+          }`}
+        >
+          <MarkdownRenderer content={message.content} />
+        </div>
+        {message.role === "user" && (
+          <Avatar className="h-8 w-8">
+            <AvatarImage
+              src={session?.user.image ?? ""}
+              alt={session?.user.name ?? "You"}
+            />
+            <AvatarFallback>
+              <Image
+                src={shadcnAvatar}
+                alt="User Avatar"
+                sizes="100vw"
+                className="h-full w-full object-cover"
+              />
+            </AvatarFallback>
+          </Avatar>
+        )}
+      </div>
+    );
+  })}
       </div>
       <div className="border-t border-gray-200 p-4 dark:border-gray-800">
         <ChatInput

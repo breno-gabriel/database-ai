@@ -3,16 +3,14 @@
 import { chat, message } from "@/db/schemas";
 import { db } from "@/drizzle";
 import { auth } from "@/lib/auth";
-import { FunctionCallingConfigMode, GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
   decideFunction,
-  getSystemInstruction,
-  queryDatabaseFunctionDeclaration,
-  schema,
+  schema
 } from "./utils";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
