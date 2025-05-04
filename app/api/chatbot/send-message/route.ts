@@ -8,7 +8,9 @@ import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+
 import { decideFunction, schema } from "./utils";
+
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY });
 
