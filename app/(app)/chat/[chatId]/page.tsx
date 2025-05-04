@@ -195,7 +195,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex body-height flex-col rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    <div className="flex body-height flex-col rounded-lg  border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
       <header className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
         <div className="flex items-center gap-3">
           {isMobile && (
@@ -222,13 +222,10 @@ export default function ChatPage() {
         </div>
       </header>
       <div
-        className={cn(
-          "flex-1 flex flex-col-reverse gap-4 overflow-y-auto p-4",
-          {
-            "body-width-sidebar": open && !isMobile,
-            "w-[100vw]": !open || isMobile,
-          }
-        )}
+        className={cn("flex-1 flex flex-col-reverse gap-4 overflow-y-auto ", {
+          "body-width-sidebar": open && !isMobile,
+          "w-[100vw]": !open || isMobile,
+        })}
       >
         {isLoading && <div>Loading...</div>}
         {isError && <div>Error loading messages</div>}

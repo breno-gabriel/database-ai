@@ -118,8 +118,8 @@
 }
 
 .body-width-sidebar {
-  width: calc(100vw - 256px);
-  max-width: calc(100vw - 256px);
+  width: calc(100vw - 16rem);
+  max-width: calc(100vw - 16rem);
 }
 
 @layer base {
